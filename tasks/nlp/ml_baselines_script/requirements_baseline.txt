@@ -1,7 +1,5 @@
-torch
+torch==2.1.0
 kagglehub
-pandas
-scikit-learn
-laser_encoders
-
-
+pandas==2.2.3
+scikit-learn==1.6.1
+laser_encoders==0.0.2
