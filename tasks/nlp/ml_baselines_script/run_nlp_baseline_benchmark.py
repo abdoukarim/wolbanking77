@@ -82,7 +82,7 @@ class CNNModel(nn.Module):
     return self.fc(conv_layer)  
 
 
-def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False, model_name=None):
+def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False):
     """
     Export the results to a CSV file.
     Args:
@@ -97,15 +97,15 @@ def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False,
     # Save the DataFrame to a CSV file
     if is_dl:
         data = {
-            'Model': [model_name], # ['LASER+MLP'],
-            'split': [split],
+            'Model': ["LASER+MLP", "LASER+CNN"], # ['LASER+MLP'],
+            'split': [split, split],
             'Precision': precision,
             'Recall': recall,
             'F1': f1
         }
         results_df = pd.DataFrame(data)
         results_df.to_csv(
-            os.path.join(output_dir, "benchmark_{model_name}_baseline_results_{split}.csv".format(model_name=model_name, split=split)), index=False)
+            os.path.join(output_dir, "benchmark_DL_baseline_results_{split}.csv".format(split=split)), index=False)
     else:
         data = {
             'Model': ['BoW+KNN', 'BoW+SVM', 'BoW+LR', 'BoW+NB'],
@@ -283,7 +283,7 @@ def compute_laser_mlp(embed_size, train_loader, valid_loader, y_test_encoded, nu
 
 
 def compute_laser_cnn(embed_size, train_loader, valid_loader, y_test_encoded, num_labels):
-    cnn_model = CNNModel().to(device)
+    cnn_model = CNNModel(embed_size, num_labels).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(cnn_model.parameters(), lr=1e-3)
     # epochs = 200
@@ -454,6 +454,7 @@ def main():
         f1_scores = []
         precision_scores = []
         recall_scores = []
+        # Compute MLP+CNN
         mlp_model, valid_loader, loss_fn, y_test_encoded = compute_laser_mlp(embed_size, train_loader, valid_loader, y_test_encoded, num_labels)
         logger.info("MLP computed")
         y_true, y_pred = eval_laser_mlp(mlp_model, valid_loader, loss_fn, le, y_test_encoded)
@@ -462,14 +463,12 @@ def main():
         precision_scores.append(precision)
         recall_scores.append(recall)
         logger.info("MLP evaluation done")
-        model_name = "LASER+MLP"
+        # model_name = "LASER+MLP"
         # Export results to CSV
-        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True, model_name=model_name)
-        logger.info("Results exported to CSV")
+        #export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True, model_name=model_name)
+        #logger.info("Results exported to CSV")
 
-        f1_scores = []
-        precision_scores = []
-        recall_scores = []
+        # Compute LASER+CNN
         cnn_model, valid_loader, loss_fn, y_test_encoded = compute_laser_cnn(embed_size, train_loader, valid_loader, y_test_encoded, num_labels)
         logger.info("CNN computed")
         y_true, y_pred = eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded)
@@ -478,9 +477,9 @@ def main():
         precision_scores.append(precision)
         recall_scores.append(recall)
         logger.info("CNN evaluation done")
-        model_name = "LASER+CNN"
+        # model_name = "LASER+CNN"
         # Export results to CSV
-        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True, model_name=model_name)
+        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True)
         logger.info("Results exported to CSV")
         
 
