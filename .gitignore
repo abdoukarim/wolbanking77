@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Exclude the following files and directories from the repository
+.dataset/text/
+.dataset/audio/
