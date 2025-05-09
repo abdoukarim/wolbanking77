@@ -1,18 +1,22 @@
 import pandas as pd
 import numpy as np
 import re
-from matplotlib import pylab as plt
+# from matplotlib import pylab as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import LinearSVC
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 import os
+import sys
 import argparse
 
 sys.path.append('.')
@@ -30,18 +34,42 @@ device = (
     if torch.backends.mps.is_available()
     else "cpu"
 )
-logger.log(f"Using {device} device")
+logger.info(f"Using {device} device")
 
 # DATASET_PATH = ".dataset/text/wolbanking77v1"
 
+def export_results_to_csv(precision, recall, f1, output_dir):
+    data = {
+        'Model': ['BoW+KNN', 'BoW+SVM', 'BoW+LR', 'BoW+NB'],
+        'split': ['5k', '5k', '5k', '5k'],
+        'Precision': precision,
+        'Recall': recall,
+        'F1': f1
+    }
+
+    results_df = pd.DataFrame(data)
+
+    # Save the DataFrame to a CSV file
+    results_df.to_csv(os.path.join(output_dir, "benchmark_baseline_results_5k.csv"), index=False)
+
+    
+
 def compute_metrics(y_true, y_pred):
-    logger.log("f1_score:", metrics.f1_score(y_true, y_pred, average='weighted'))
-    logger.log("precision_score:", metrics.precision_score(y_true, y_pred, average='weighted'))
-    logger.log("recall_score:", metrics.recall_score(y_true, y_pred, average='weighted'))
+    logger.info("f1_score:")
+    f1 = metrics.f1_score(y_true, y_pred, average='weighted')
+    logger.info(f1)
+    logger.info("precision_score:")
+    precision = metrics.precision_score(y_true, y_pred, average='weighted')
+    logger.info(precision)
+    logger.info("recall_score:")
+    recall = metrics.recall_score(y_true, y_pred, average='weighted')
+    logger.info(recall)
+
+    return f1, precision, recall
 
 def load_data(dataset_path):
-    df_train = pd.read_csv(os.path.join(dataset_path, "/full/train/train.csv"))
-    df_test = pd.read_csv(os.path.join(dataset_path, "/full/test/test.csv"))
+    df_train = pd.read_csv(os.path.join(dataset_path, "full/train/train.csv"))
+    df_test = pd.read_csv(os.path.join(dataset_path, "full/test/test.csv"))
     df_train = df_train[['input_wo', 'label']]
     df_test = df_test[['input_wo', 'label']]
     #removal of punctuation marks
@@ -78,31 +106,104 @@ def compute_knn(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded):
     y_true = [le.classes_[y] for y in y_test_encoded]
     y_pred = [le.classes_[y] for y in pred]
 
-    return compute_metrics(y_true, y_pred)
+    return y_true, y_pred
+
+def compute_svm(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded):
+    clf = LinearSVC(random_state=42)
+    clf.fit(X_train_seq, y_train_encoded)
+    pred = clf.predict(X_test_seq)
+    y_true = [le.classes_[y] for y in y_test_encoded]
+    y_pred = [le.classes_[y] for y in pred]
+
+    return y_true, y_pred
+
+def compute_lr(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded):
+    clf = LogisticRegression(random_state=42)
+    clf.fit(X_train_seq, y_train_encoded)
+    pred = clf.predict(X_test_seq)
+    y_true = [le.classes_[y] for y in y_test_encoded]
+    y_pred = [le.classes_[y] for y in pred]
+
+    return y_true, y_pred
+
+def compute_nb(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded):
+    clf = GaussianNB()
+    clf.fit(X_train_seq, y_train_encoded)
+    pred = clf.predict(X_test_seq.toarray())
+    y_true = [le.classes_[y] for y in y_test_encoded]
+    y_pred = [le.classes_[y] for y in pred]
+
+    return y_true, y_pred
 
 def main():
     parser = argparse.ArgumentParser()
 
     # Required parameters
     parser.add_argument(
-        "--dataset_dir",
-        default=None,
+        "dataset_dir",
+        # default=None,
         type=str,
-        required=True,
+        # required=True,
         help="The input data dir. Should contain the training files for the text baseline task.",
     )
 
+    # Optional parameters
+    parser.add_argument(
+        "--output_dir",
+        default=".results",
+        type=str,
+        help="The output directory where the model predictions results will be written.",
+    )
+    
+    args = parser.parse_args()
     # Load the dataset
-    X_train, X_test, y_train_encoded, y_test_encoded, le, num_labels = load_data(parser.dataset_dir)
+    X_train, X_test, y_train_encoded, y_test_encoded, le, num_labels = load_data(args.dataset_dir)
     logger.info("Dataset loaded")
 
     # Apply Bag of Words
     X_train_seq, X_test_seq = apply_bow(X_train, X_test)
     logger.info("Bag of Words applied")
-
+    f1_scores = []
+    precision_scores = []
+    recall_scores = []
+    
     # Compute KNN
-    compute_knn(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded)
+    y_true, y_pred = compute_knn(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded)
+    f1, precision, recall = compute_metrics(y_true, y_pred)
+    f1_scores.append(f1)
+    precision_scores.append(precision)
+    recall_scores.append(recall)
     logger.info("KNN computed")
+
+    # Compute SVM
+    y_true, y_pred = compute_svm(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded)
+    f1, precision, recall = compute_metrics(y_true, y_pred)
+    f1_scores.append(f1)
+    precision_scores.append(precision)
+    recall_scores.append(recall)
+    logger.info("SVM computed")
+
+    # Compute Logistic Regression
+    y_true, y_pred = compute_lr(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded)
+    f1, precision, recall = compute_metrics(y_true, y_pred)
+    f1_scores.append(f1)
+    precision_scores.append(precision)
+    recall_scores.append(recall)
+    logger.info("Logistic Regression computed")
+
+    # Compute Naive Bayes
+    y_true, y_pred = compute_nb(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded)
+    f1, precision, recall = compute_metrics(y_true, y_pred)
+    f1_scores.append(f1)
+    precision_scores.append(precision)
+    recall_scores.append(recall)
+    logger.info("Naive Bayes computed")
+
+    # Export results to CSV
+    # os.makedirs(output_dir, exist_ok=True)
+    export_results_to_csv(precision_scores, recall_scores, f1_scores, args.ouptput_dir)
+    logger.info("Results exported to CSV")
+
 
 if __name__ == "__main__":
     main()

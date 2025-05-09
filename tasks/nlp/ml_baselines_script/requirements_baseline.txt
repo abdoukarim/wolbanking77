@@ -1,4 +1,6 @@
 torch
 kagglehub
 pandas
+scikit-learn
+
 
