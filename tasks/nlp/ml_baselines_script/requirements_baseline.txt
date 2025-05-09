@@ -2,5 +2,6 @@ torch
 kagglehub
 pandas
 scikit-learn
+laser_encoders
 
 

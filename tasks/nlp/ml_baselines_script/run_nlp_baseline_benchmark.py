@@ -19,6 +19,8 @@ import os
 import sys
 import argparse
 
+from laser_encoders import LaserEncoderPipeline
+
 sys.path.append('.')
 from utils.logger import setup_logger
 from utils.utils_functions import set_seed
@@ -38,10 +40,43 @@ logger.info(f"Using {device} device")
 
 # DATASET_PATH = ".dataset/text/wolbanking77v1"
 
-def export_results_to_csv(precision, recall, f1, output_dir, split):
+class MLP(nn.Module):
+    def __init__(self, embed_size, num_labels):
+        """
+        Initialize the MLP model.
+        Args:
+            embed_size (int): Size of the input embeddings.
+            num_labels (int): Number of output labels.
+        """
+        super(MLP, self).__init__()
+        super().__init__()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(embed_size, 800),
+            nn.ReLU(),
+            nn.Linear(800, 800),
+            nn.ReLU(),
+            nn.Linear(800, num_labels),
+        )
+
+    def forward(self, x):
+        logits = self.linear_relu_stack(x)
+        return logits
+
+
+def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False):
+    """
+    Export the results to a CSV file.
+    Args:
+        precision (list): List of precision scores.
+        recall (list): List of recall scores.
+        f1 (list): List of F1 scores.
+        output_dir (str): Directory to save the CSV file.
+        split (str): The split of the dataset.
+        is_ml (bool): Flag to indicate if the results are from DL models.
+    """
     data = {
         'Model': ['BoW+KNN', 'BoW+SVM', 'BoW+LR', 'BoW+NB'],
-        'split': ['full', 'full', 'full', 'full'],
+        'split': [split, split, split, split],
         'Precision': precision,
         'Recall': recall,
         'F1': f1
@@ -50,10 +85,23 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     results_df = pd.DataFrame(data)
 
     # Save the DataFrame to a CSV file
-    results_df.to_csv(os.path.join(output_dir, "benchmark_baseline_results_{}.csv".format(split=split)), index=False)
+    if is_dl:
+        results_df.to_csv(os.path.join(output_dir, "benchmark_dl_baseline_results_{split}.csv".format(split=split)), index=False)
+    else:
+        results_df.to_csv(os.path.join(output_dir, "benchmark_ml_baseline_results_{split}.csv".format(split=split)), index=False)
 
 
 def compute_metrics(y_true, y_pred):
+    """
+    Compute evaluation metrics: F1 score, precision, and recall.
+    Args:
+        y_true (list): True labels.
+        y_pred (list): Predicted labels.
+    Returns:
+        f1 (float): F1 score.
+        precision (float): Precision score.
+        recall (float): Recall score.
+    """
     logger.info("f1_score:")
     f1 = metrics.f1_score(y_true, y_pred, average='weighted')
     logger.info(f1)
@@ -150,6 +198,104 @@ def compute_nb(le, X_train_seq, X_test_seq, y_train_encoded, y_test_encoded):
 
     return y_true, y_pred
 
+
+def train(dataloader, model, loss_fn, optimizer):
+    size = len(dataloader.dataset)
+    model.train()
+    avg_loss = 0.
+    for batch, (X, y) in enumerate(dataloader):
+        X, y = X.to(device), y.to(device)
+        # Compute prediction error
+        pred = model(X)
+        loss = loss_fn(pred, y)
+
+        # Backpropagation
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+
+        if batch % 100 == 0:
+            loss, current = loss.item(), (batch + 1) * len(X)
+            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            avg_loss += loss / len(dataloader)
+    return avg_loss
+
+
+def test(dataloader, model, loss_fn):
+    size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    model.eval()
+    test_loss, correct = 0, 0
+    with torch.no_grad():
+        for X, y in dataloader:
+            X, y = X.to(device), y.to(device)
+            pred = model(X)
+            test_loss += loss_fn(pred, y).item()
+            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    test_loss /= num_batches
+    correct /= size
+    print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    return test_loss
+
+
+def compute_laser_mlp(X_train, X_test, y_train_encoded, y_test_encoded, num_labels):
+    encoder = LaserEncoderPipeline(lang="wol_Latn", model_dir="checkpoint/laser_checkpoint")
+    X_train_seq = encoder.encode_sentences(list(X_train))
+    X_test_seq = encoder.encode_sentences(list(X_test))
+
+    embed_size = X_train_seq.shape[1]
+    # Load train and test in CUDA Memory
+    X_train_tensor = torch.tensor(X_train_seq, dtype=torch.float32).to(device)
+    y_train_tensor = torch.tensor(y_train_encoded, dtype=torch.long).to(device)
+    X_valid = torch.tensor(X_test_seq, dtype=torch.float32).to(device)
+    y_valid = torch.tensor(y_test_encoded, dtype=torch.long).to(device)
+
+    # Create Torch datasets
+    train_data = torch.utils.data.TensorDataset(X_train_tensor, y_train_tensor)
+    valid_data = torch.utils.data.TensorDataset(X_valid, y_valid)
+
+    train_loader = torch.utils.data.DataLoader(train_data, shuffle=True)
+    valid_loader = torch.utils.data.DataLoader(valid_data, shuffle=False)
+
+    mlp_model = MLP(embed_size, num_labels).to(device)
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(mlp_model.parameters(), lr=1e-3)
+    # epochs = 200
+    epochs = 1
+    train_loss = []
+    test_avg_loss = []
+    for t in range(epochs):
+        logger.info(f"Epoch {t+1}\n-------------------------------")
+        train_loss.append(train(train_loader, mlp_model, loss_fn, optimizer))
+        test_avg_loss.append(test(valid_loader, mlp_model, loss_fn))
+    logger.info("Mlp Training Done!")
+
+    return mlp_model, valid_loader, loss_fn, y_test_encoded
+
+
+def eval_laser_mlp(mlp_model, valid_loader, loss_fn, le, y_test_encoded):
+    """
+    Evaluate the MLP model on the validation set.
+    Args:
+        mlp_model (MLP): The trained MLP model.
+        valid_loader (DataLoader): DataLoader for the validation set.
+        loss_fn (nn.Module): Loss function used for evaluation.
+    """
+    # MODEL EVALUATION
+    mlp_model.eval()
+    avg_val_loss = 0.
+    val_preds = []
+    for i, (x_batch, y_batch) in enumerate(valid_loader):
+        y_pred = mlp_model(x_batch).detach()
+        avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
+        # keep/store predictions
+        val_preds.append(F.softmax(y_pred).cpu().numpy().argmax(1))
+    y_true = [le.classes_[y] for y in y_test_encoded]
+    y_pred = [le.classes_[y] for y in val_preds]
+
+    return y_true, y_pred
+
+
 def main():
     parser = argparse.ArgumentParser()
 
@@ -175,7 +321,7 @@ def main():
     splits = ["full", "5k_split"]
     for split in splits:
 
-        logger.info("Run {split} benchmark script")
+        logger.info("Run {split} benchmark script".format(split=split))
         
         # Load the dataset
         X_train, X_test, y_train_encoded, y_test_encoded, le, num_labels = load_data(args.dataset_dir, split=split)
@@ -222,7 +368,31 @@ def main():
 
         # Export results to CSV
         os.makedirs(args.output_dir, exist_ok=True)
-        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir)
+        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split)
+        logger.info("Results exported to CSV")
+
+    logger.info("=========================== Compute LASER MLP ===========================")
+    for split in splits:
+
+        logger.info("Run {split} benchmark script".format(split=split))
+        
+        # Load the dataset
+        X_train, X_test, y_train_encoded, y_test_encoded, le, num_labels = load_data(args.dataset_dir, split=split)
+        logger.info("Dataset loaded")
+
+        f1_scores = []
+        precision_scores = []
+        recall_scores = []
+        mlp_model, valid_loader, loss_fn, y_test_encoded = compute_laser_mlp(X_train, X_test, y_train_encoded, y_test_encoded, num_labels)
+        logger.info("MLP computed")
+        y_true, y_pred = eval_laser_mlp(mlp_model, valid_loader, loss_fn, le, y_test_encoded)
+        f1, precision, recall = compute_metrics(y_true, y_pred)
+        f1_scores.append(f1)
+        precision_scores.append(precision)
+        recall_scores.append(recall)
+        logger.info("MLP evaluation done")
+        # Export results to CSV
+        export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split)
         logger.info("Results exported to CSV")
 
 
