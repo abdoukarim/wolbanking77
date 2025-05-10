@@ -10,7 +10,7 @@ from utils.logger import setup_logger
 from utils.utils_functions import set_seed, load_data, tokenize_data
 
 set_seed(42)
-logger = setup_logger("Bert Base Evaluation script")
+logger = setup_logger("AfroXLM-R Evaluation script")
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -36,7 +36,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     # Save the DataFrame to a CSV file
     
     data = {
-        'Model': ["BERT"],
+        'Model': ["AfroXLM"],
         'split': [split],
         'Precision': precision,
         'Recall': recall,
@@ -44,7 +44,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     }
     results_df = pd.DataFrame(data)
     results_df.to_csv(
-        os.path.join(output_dir, "benchmark_BERT_results_{split}.csv".format(split=split)), index=False)
+        os.path.join(output_dir, "benchmark_AfroXLM_results_{split}.csv".format(split=split)), index=False)
 
 
 def compute_metrics(y_true, y_pred):
@@ -71,17 +71,17 @@ def compute_metrics(y_true, y_pred):
     return f1, precision, recall
 
 # Tokenize helper function
-def tokenize(batch, model_id="bert-base-uncased"):
+def tokenize(batch, model_id="Davlan/afro-xlmr-large"):
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     return tokenizer(batch['text'], padding='max_length', truncation=True, return_tensors="pt")
 
 
 def predict(batch, model):
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
-    token_type_ids = torch.tensor(batch['token_type_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)
     with torch.no_grad():
-        logits = model(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask).logits
+        logits = model(input_ids=input_ids,
+                       attention_mask=attention_mask).logits
         predicted = torch.argmax(logits, dim=-1)[0]
     return predicted
 
@@ -116,7 +116,7 @@ def main():
     # check if the output directory exists, if not create it
     os.makedirs(args.output_dir, exist_ok=True)
 
-    logger.info("=========================== EVALUATE BERT BASE ===========================")
+    logger.info("=========================== EVALUATE AfroXLM-R ===========================")
 
     logger.info("Run {split} benchmark script".format(split=args.split))
     
@@ -126,9 +126,7 @@ def main():
     
     tokenized_dataset, labels, _, _, _ = tokenize_data(raw_dataset, tokenize)
 
-    # repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split)+"/checkpoint-125")
-    repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split))
-    # model_id = repository_id
+    repository_id = os.path.join(os.getcwd(), "afro-xlmr-large-banking77-wolof--{split}".format(split=args.split))
     # tokenizer = AutoTokenizer.from_pretrained(repository_id)
     model = AutoModelForSequenceClassification.from_pretrained(repository_id, use_safetensors=True).to("cuda")
     model.to("cuda")
@@ -136,7 +134,7 @@ def main():
     y_pred = []
     for y in predictions:
         y_pred.append(labels[y])
-    
+
     y_test = []
     for y in tokenized_dataset["test"]['label']:
         y_test.append(labels[y])
@@ -145,6 +143,7 @@ def main():
     # Export the results to a CSV file
     export_results_to_csv(precision, recall, f1, args.output_dir, args.split)
     
+    
 if __name__ == "__main__":
     main()
-    logger.info("Bert evaluation finished")
+    logger.info("AfroXLM-R evaluation finished")

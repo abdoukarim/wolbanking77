@@ -50,3 +50,27 @@ def load_data(dataset_path, split="full"):
     return raw_dataset
 
 
+def tokenize_data(raw_dataset, tokenize):
+    # Load Tokenizer
+    tokenized_dataset = raw_dataset.map(tokenize, batched=True,remove_columns=["text"])
+    labels = []
+    for label in tokenized_dataset["train"]:
+        labels.append(label['label'])
+    labels = list(set(labels))
+    num_labels = len(labels)
+    new_features = tokenized_dataset['train'].features.copy()
+    new_features['label'] = ClassLabel(names=list(set(labels)))
+    tokenized_dataset['train'] = tokenized_dataset['train'].cast(new_features)
+    new_features = tokenized_dataset['test'].features.copy()
+    new_features['label'] = ClassLabel(names=list(set(labels)))
+    tokenized_dataset['test'] = tokenized_dataset['test'].cast(new_features)
+
+    # Prepare model labels - useful for inference
+    label2id, id2label = dict(), dict()
+    for i, label in enumerate(labels):
+        label2id[label] = str(i)
+        id2label[str(i)] = label
+
+    return tokenized_dataset, labels, num_labels, label2id, id2label
+
+
