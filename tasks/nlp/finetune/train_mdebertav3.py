@@ -2,7 +2,7 @@ import sys
 import torch
 import numpy as np
 import argparse
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, XLMRobertaTokenizer
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 import evaluate
 from huggingface_hub import HfFolder
 
@@ -11,7 +11,7 @@ from utils.logger import setup_logger
 from utils.utils_functions import set_seed, load_data, tokenize_data
 
 set_seed(42)
-logger = setup_logger("AfroLM Training script")
+logger = setup_logger("mDeBERTa Training script")
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -33,9 +33,8 @@ def compute_metrics(eval_pred):
 
 
 # Tokenize helper function
-def tokenize(batch, model_id="bonadossou/afrolm_active_learning"):
-    tokenizer = XLMRobertaTokenizer.from_pretrained(model_id)
-    tokenizer.model_max_length = 256
+def tokenize(batch, model_id="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"):
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
     return tokenizer(batch['text'], padding='max_length', truncation=True, return_tensors="pt")
 
 
@@ -68,12 +67,10 @@ def main():
     args = parser.parse_args()
 
     # Model id to load the tokenizer
-    model_id = "bonadossou/afrolm_active_learning"
+    model_id = "MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"
     tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-    # splits = ["full", "5k_split"]
-    
-    logger.info("=========================== FINETUE AfroLM ===========================")
+    logger.info("=========================== FINETUE mDeBERTa ===========================")
 
     logger.info("Run {split} benchmark script".format(split=args.split))
     
@@ -85,21 +82,21 @@ def main():
 
     # Download the model from huggingface.co/models
     model = AutoModelForSequenceClassification.from_pretrained(
-        model_id, num_labels=num_labels, label2id=label2id, id2label=id2label)
+        model_id, num_labels=num_labels, label2id=label2id, id2label=id2label, ignore_mismatched_sizes=True)
     
     # Id for remote repository
-    repository_id = "checkpoint/afrolm/afrolm_active_learning-banking77-wolof-{split}".format(split=args.split)
+    repository_id = "checkpoint/mDeBERTa-v3/mDeBERTa-v3-base-banking77-wolof-{split}".format(split=args.split)
 
     # Define training args
     training_args = TrainingArguments(
         output_dir=repository_id,
-        per_device_train_batch_size=16, # 8 16
+        per_device_train_batch_size=8, # 8 16
         per_device_eval_batch_size=8, # 8
         learning_rate=2e-05,
         # num_train_epochs=20, # 5
         num_train_epochs=1,
         warmup_ratio=0.1,
-        weight_decay=0.01,
+        weight_decay=0.06,
             # PyTorch 2.0 specifics 
         # bf16=True, # bfloat16 training 
         # torch_compile=True, # optimizations
@@ -143,4 +140,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    logger.info("Training AfroLM finished")
+    logger.info("Training mDeBERTa finished")
+

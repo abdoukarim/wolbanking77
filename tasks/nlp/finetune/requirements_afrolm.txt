@@ -7,3 +7,4 @@ tensorboard
 accelerate
 kagglehub
 torch
+sentencepiece
