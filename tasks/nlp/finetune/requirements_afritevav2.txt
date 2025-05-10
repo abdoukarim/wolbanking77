@@ -1,0 +1,10 @@
+pandas
+scikit-learn
+datasets 
+evaluate 
+tensorboard 
+transformers 
+accelerate 
+sentencepiece 
+kagglehub
+torch

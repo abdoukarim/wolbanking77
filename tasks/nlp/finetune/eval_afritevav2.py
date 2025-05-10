@@ -5,12 +5,13 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from sklearn import metrics
 import pandas as pd
 
+
 sys.path.append('.')
 from utils.logger import setup_logger
 from utils.utils_functions import set_seed, load_data, tokenize_data
 
 set_seed(42)
-logger = setup_logger("mDeBERTa Evaluation script")
+logger = setup_logger("afriteva_v2_base Evaluation script")
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -36,7 +37,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     # Save the DataFrame to a CSV file
     
     data = {
-        'Model': ["mDeBERTa"],
+        'Model': ["afriteva_v2_base"],
         'split': [split],
         'Precision': precision,
         'Recall': recall,
@@ -44,7 +45,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     }
     results_df = pd.DataFrame(data)
     results_df.to_csv(
-        os.path.join(output_dir, "benchmark_mDeBERTa_results_{split}.csv".format(split=split)), index=False)
+        os.path.join(output_dir, "benchmark_afriteva_v2_base_results_{split}.csv".format(split=split)), index=False)
 
 
 def compute_metrics(y_true, y_pred):
@@ -72,17 +73,17 @@ def compute_metrics(y_true, y_pred):
 
 
 # Tokenize helper function
-def tokenize(batch, model_id="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"):
+def tokenize(batch, model_id="castorini/afriteva_v2_base"):
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     return tokenizer(batch['text'], padding='max_length', truncation=True, return_tensors="pt")
 
 
 def predict(batch, model):
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
-    token_type_ids = torch.tensor(batch['token_type_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)
     with torch.no_grad():
-        logits = model(input_ids=input_ids, token_type_ids=token_type_ids, attention_mask=attention_mask).logits
+        logits = model(input_ids=input_ids,
+                       attention_mask=attention_mask).logits
         predicted = torch.argmax(logits, dim=-1)[0]
     return predicted
 
@@ -117,7 +118,7 @@ def main():
     # check if the output directory exists, if not create it
     os.makedirs(args.output_dir, exist_ok=True)
 
-    logger.info("=========================== EVALUATE mDeBERTa ===========================")
+    logger.info("=========================== EVALUATE afriteva_v2_base ===========================")
 
     logger.info("Run {split} benchmark script".format(split=args.split))
     
@@ -126,7 +127,7 @@ def main():
     logger.info("Dataset loaded")
     
     tokenized_dataset, labels, _, _, _ = tokenize_data(raw_dataset, tokenize)
-    repository_id = os.path.join(os.getcwd(), "checkpoint/mDeBERTa-v3/mDeBERTa-v3-base-banking77-wolof-{split}".format(split=args.split))
+    repository_id = os.path.join(os.getcwd(), "checkpoint/afriteva_v2_base/afriteva_v2_base-banking77-wolof-{split}".format(split=args.split))
 
     model = AutoModelForSequenceClassification.from_pretrained(repository_id, use_safetensors=True).to("cuda")
     model.to("cuda")
@@ -147,4 +148,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    logger.info("mDeBERTa evaluation finished")
+    logger.info("afriteva_v2_base evaluation finished")
+
