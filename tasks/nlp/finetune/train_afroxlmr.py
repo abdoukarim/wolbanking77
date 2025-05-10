@@ -4,7 +4,6 @@ import numpy as np
 import argparse
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from huggingface_hub import HfFolder
-from datasets import ClassLabel
 import evaluate
 
 sys.path.append('.')
@@ -85,7 +84,7 @@ def main():
         model_id, num_labels=num_labels, label2id=label2id, id2label=id2label)
     
     # Id for remote repository
-    repository_id = "afro-xlmr-large-banking77-wolof-{split}".format(split=args.split)
+    repository_id = "checkpoint/AfroXLM/afro-xlmr-large-banking77-wolof-{split}".format(split=args.split)
 
     # Define training args
     training_args = TrainingArguments(

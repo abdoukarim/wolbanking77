@@ -2,10 +2,9 @@ import sys
 import torch
 import numpy as np
 import argparse
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, XLMRobertaTokenizer
 import evaluate
 from huggingface_hub import HfFolder
-
 
 sys.path.append('.')
 from utils.logger import setup_logger
@@ -32,9 +31,11 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(predictions, axis=1)
     return metric.compute(predictions=predictions, references=labels, average="weighted")
 
+
 # Tokenize helper function
-def tokenize(batch, model_id="bert-base-uncased"):
-    tokenizer = AutoTokenizer.from_pretrained(model_id)
+def tokenize(batch, model_id="bonadossou/afrolm_active_learning"):
+    tokenizer = XLMRobertaTokenizer.from_pretrained(model_id)
+    tokenizer.model_max_length = 256
     return tokenizer(batch['text'], padding='max_length', truncation=True, return_tensors="pt")
 
 
@@ -87,15 +88,15 @@ def main():
         model_id, num_labels=num_labels, label2id=label2id, id2label=id2label)
     
     # Id for remote repository
-    repository_id = "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split)
+    repository_id = "checkpoint/afrolm/afrolm_active_learning-banking77-wolof-{split}".format(split=args.split)
 
     # Define training args
     training_args = TrainingArguments(
         output_dir=repository_id,
-        per_device_train_batch_size=32, # 8 16
-        per_device_eval_batch_size=32, # 8
+        per_device_train_batch_size=16, # 8 16
+        per_device_eval_batch_size=8, # 8
         learning_rate=2e-05,
-        # num_train_epochs=20, # 20
+        # num_train_epochs=20, # 5
         num_train_epochs=1,
         warmup_ratio=0.1,
         weight_decay=0.01,
@@ -139,6 +140,7 @@ def main():
     # save model
     trainer.save_model(repository_id)
 
+
 if __name__ == "__main__":
     main()
-    logger.info("Training Bert finished")
+    logger.info("Training AfroLM finished")
