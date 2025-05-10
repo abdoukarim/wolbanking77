@@ -1,0 +1,8 @@
+pandas
+# !pip install matplotlib
+scikit-learn
+transformers
+datasets
+evaluate
+tensorboard
+accelerate

@@ -26,7 +26,7 @@ from utils.logger import setup_logger
 from utils.utils_functions import set_seed
 
 set_seed(42)
-logger = setup_logger("Training script")
+logger = setup_logger("Baseline benchmark script")
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -91,8 +91,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False)
         f1 (list): List of F1 scores.
         output_dir (str): Directory to save the CSV file.
         split (str): The split of the dataset.
-        is_ml (bool): Flag to indicate if the results are from DL models.
-        model_name (str): Name of the model.
+        is_dl (bool): Flag to indicate if the results are from DL models.
     """
     # Save the DataFrame to a CSV file
     if is_dl:
