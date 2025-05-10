@@ -160,6 +160,8 @@ def main():
 
     # Save processor and create model card
     tokenizer.save_pretrained(repository_id)
+    # save model
+    trainer.save_model(repository_id)
 
 if __name__ == "__main__":
     main()

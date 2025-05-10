@@ -6,3 +6,4 @@ datasets
 evaluate
 tensorboard
 accelerate
+kagglehub

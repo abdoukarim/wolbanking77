@@ -462,10 +462,6 @@ def main():
         precision_scores.append(precision)
         recall_scores.append(recall)
         logger.info("MLP evaluation done")
-        # model_name = "LASER+MLP"
-        # Export results to CSV
-        #export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True, model_name=model_name)
-        #logger.info("Results exported to CSV")
 
         # Compute LASER+CNN
         cnn_model, valid_loader, loss_fn, y_test_encoded = compute_laser_cnn(embed_size, train_loader, valid_loader, y_test_encoded, num_labels)
@@ -476,7 +472,7 @@ def main():
         precision_scores.append(precision)
         recall_scores.append(recall)
         logger.info("CNN evaluation done")
-        # model_name = "LASER+CNN"
+        
         # Export results to CSV
         export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True)
         logger.info("Results exported to CSV")

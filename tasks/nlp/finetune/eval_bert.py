@@ -114,6 +114,8 @@ def main():
     )
     
     args = parser.parse_args()
+    # check if the output directory exists, if not create it
+    os.makedirs(args.output_dir, exist_ok=True)
 
     logger.info("=========================== EVALUATE BERT BASE ===========================")
 
@@ -143,10 +145,11 @@ def main():
         label2id[label] = str(i)
         id2label[str(i)] = label
 
-    repository_id = "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split)
-    model_id = repository_id+"/checkpoint-2500"
+    # repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split)+"/checkpoint-125")
+    repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split))
+    # model_id = repository_id
     # tokenizer = AutoTokenizer.from_pretrained(repository_id)
-    model = AutoModelForSequenceClassification.from_pretrained(model_id, use_safetensors=True).to("cuda")
+    model = AutoModelForSequenceClassification.from_pretrained(repository_id, use_safetensors=True).to("cuda")
     model.to("cuda")
     predictions = [predict(batch, model) for batch in tokenized_dataset["test"]]
     y_pred = []
