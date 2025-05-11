@@ -131,7 +131,7 @@ def main():
     # create the output directory
     Path("./Llama-3.2-3B-Instruct-torchtune-checkpoints").mkdir(parents=True, exist_ok=True)
     # run following command to start training
-    # !tune run lora_finetune_single_device --config "custom_config.yaml" epochs=20
+    # !tune run lora_finetune_single_device --config "custom_config_llama3_2_3B.yaml" epochs=20
 
 
 if __name__ == "__main__":
