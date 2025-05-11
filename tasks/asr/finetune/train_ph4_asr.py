@@ -12,10 +12,10 @@ from transformers import (
 from accelerate import Accelerator
 from pathlib import Path
 import torch
-import sys
+import os, sys
 import argparse
 
-from datasets import load_from_disk
+from datasets import load_dataset
 from torch.utils.data import Dataset
 from tqdm import tqdm
 import numpy as np
@@ -200,7 +200,10 @@ def main():
     )
     
     args = parser.parse_args()
-    ds = load_from_disk(args.dataset_dir)
+    # ds = load_from_disk(args.dataset_dir)
+    ds = load_dataset("parquet", 
+                      data_files={'train': os.path.join(args.dataset_dir, 'train.parquet'), 
+                                  'test': os.path.join(args.dataset_dir, 'test.parquet')})
 
     BATCH_SIZE_PER_GPU = 16 # 8
     # EVAL_BATCH_SIZE_PER_GPU = 24

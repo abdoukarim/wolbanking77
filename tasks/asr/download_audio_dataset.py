@@ -11,7 +11,7 @@ from utils.logger import setup_logger
 
 logger = setup_logger("Downloading audio dataset")
 # Download the latest version.
-source_dataset_path = kagglehub.dataset_download("abdoukarimkandji/WolBankingAudioDatasetParquet")
+source_dataset_path = kagglehub.dataset_download("abdoukarimkandji/wolbanking77audiodatasetparquet")
 destination_dataset_path = os.path.join(os.getcwd(), "dataset/audio")
-shutil.move(os.path.join(source_dataset_path, "WolBankingAudioDataset"), destination_dataset_path)
+shutil.move(source_dataset_path, destination_dataset_path)
 logger.info(f"Dataset downloaded and moved to {destination_dataset_path}")
