@@ -1,18 +1,19 @@
 import torch
-import tqdm
+from tqdm import tqdm
 from transformers import pipeline
 import os, sys
 import argparse
 import pandas as pd
 from sklearn import metrics
 from datasets import ClassLabel
+from huggingface_hub import login
 
 sys.path.append('.')
 from utils.logger import setup_logger
 from utils.utils_functions import set_seed, load_data, tokenize_data
 
 set_seed(42)
-logger = setup_logger("afriteva_v2_base Evaluation script")
+logger = setup_logger("Llama3.2 Evaluation script")
 
 # Get cpu, gpu or mps device for training.
 device = (
@@ -38,7 +39,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     # Save the DataFrame to a CSV file
     
     data = {
-        'Model': ["afriteva_v2_base"],
+        'Model': ["Llama3.2"],
         'split': [split],
         'Precision': precision,
         'Recall': recall,
@@ -46,7 +47,7 @@ def export_results_to_csv(precision, recall, f1, output_dir, split):
     }
     results_df = pd.DataFrame(data)
     results_df.to_csv(
-        os.path.join(output_dir, "benchmark_afriteva_v2_base_results_{split}.csv".format(split=split)), index=False)
+        os.path.join(output_dir, "benchmark_Llama3.2_results_{split}.csv".format(split=split)), index=False)
 
 
 def compute_metrics(y_true, y_pred):
@@ -143,7 +144,7 @@ def main():
     # check if the output directory exists, if not create it
     os.makedirs(args.output_dir, exist_ok=True)
 
-    logger.info("=========================== EVALUATE afriteva_v2_base ===========================")
+    logger.info("=========================== EVALUATE Llama3.2 ===========================")
 
     logger.info("Run {split} benchmark script".format(split=args.split))
     
@@ -174,8 +175,13 @@ def main():
 
     # train_rows = create_dataset(train_df, id2label, labels)
     test_rows = create_dataset(test_df, id2label, labels)
-
-    model_id = os.path.join(os.getcwd(), "Llama-3.2-1B-Instruct-torchtune-checkpoints{split}".format(split=args.split))
+    
+    # Generate huggingface token
+    TOKEN = input("Enter your Hugging Face token: ")
+    login(token = TOKEN)
+    # model_id = os.path.join(os.getcwd(), "Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
+    model_id = input("Enter the path to the model checkpoint: .Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
+    print("================= model_id ============",model_id)
     # model_id = "/workspace/NLP_TASKS/Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_14"
     generator = pipeline(
             "text-generation",
