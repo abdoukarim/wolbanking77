@@ -1,0 +1,6 @@
+scikit-learn 
+transformers 
+tensorboard 
+kagglehub 
+accelerate
+peft
