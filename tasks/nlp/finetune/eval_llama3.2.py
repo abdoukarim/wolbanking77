@@ -180,7 +180,7 @@ def main():
     TOKEN = input("Enter your Hugging Face token: ")
     login(token = TOKEN)
     # model_id = os.path.join(os.getcwd(), "Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
-    model_id = input("Enter the path to the model checkpoint: .Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
+    model_id = input("Enter the path to the model checkpoint: ./Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
     print("================= model_id ============",model_id)
     # model_id = "/workspace/NLP_TASKS/Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_14"
     generator = pipeline(

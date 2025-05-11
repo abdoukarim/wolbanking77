@@ -1,17 +1,13 @@
 import sys
 import json
-import re
 from pathlib import Path
 from typing import List
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.metrics import accuracy_score, classification_report, f1_score, precision_score, recall_score
+# from sklearn.metrics import accuracy_score, classification_report, f1_score, precision_score, recall_score
 from tqdm import tqdm
-
 import argparse
-from transformers import pipeline
-import evaluate
 
 from datasets import ClassLabel
 
