@@ -1,0 +1,16 @@
+librosa 
+soundfile
+huggingface_hub
+scipy
+peft
+backoff
+accelerate
+sacrebleu
+torchvision
+hf_transfer
+transformers==4.48.2
+datasets
+evaluate
+jiwer
+torch
+tensorboard
