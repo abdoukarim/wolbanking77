@@ -1,0 +1,6 @@
+torch 
+torchaudio
+wget
+text-unidecode
+omegaconf
+soundfile

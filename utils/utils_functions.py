@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from datasets import Dataset
+from torch.utils.data import Dataset as TorchDataset
 from datasets import concatenate_datasets
 from datasets import DatasetDict
 from datasets import ClassLabel
@@ -149,7 +150,7 @@ def esb_collate_fn(batch):
 INSTRUCTION = "Transcribe the Wolof audio clip."
 ANSWER_SUFFIX = "<|end|><|endoftext|>"
 _IGNORE_INDEX = -100
-class WolBanking77Dataset(Dataset):
+class WolBanking77Dataset(TorchDataset):
     def __init__(self, processor, dataset, training=True):
         """
         processor: the AutoProcessor instance

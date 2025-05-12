@@ -4,9 +4,7 @@ from transformers import (
     AutoModelForCausalLM,
     AutoProcessor,
     TrainingArguments,
-    Trainer,
-    BatchFeature,
-    StoppingCriteria,
+    Trainer
 )
 
 from accelerate import Accelerator
@@ -16,7 +14,6 @@ import os, sys
 import argparse
 
 from datasets import load_dataset
-from torch.utils.data import Dataset
 from tqdm import tqdm
 import numpy as np
 from evaluate import load
