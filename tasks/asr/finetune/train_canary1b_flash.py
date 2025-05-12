@@ -92,7 +92,7 @@ def main():
     ds['train'].map(preprocess_audio_dataset)
     ds['test'].map(preprocess_audio_dataset)
     manifest_path = './train_manifest.json'
-    build_manifest(data=ds['train'], manifest_path=manifest_path)
+    build_manifest(data=pd.DataFrame(ds['train']), manifest_path=manifest_path)
     wget_from_nemo('scripts/tokenizers/process_asr_text_tokenizer.py')
     LANG='wo'
     DATA='WICD'
@@ -134,7 +134,7 @@ def main():
     base_model_cfg['name'] = 'canary-1b-flash-finetune'
     base_model_cfg.pop("init_from_nemo_model", None)
     base_model_cfg['init_from_pretrained_model'] = "nvidia/canary-1b-flash"
-    canary_model.save_tokenizers('./canary_flash_tokenizers/')
+    # canary_model.save_tokenizers('./canary_flash_tokenizers/')
 
     for lang in os.listdir('canary_flash_tokenizers'):
         base_model_cfg['model']['tokenizer']['langs'][lang] = {}
@@ -150,12 +150,12 @@ def main():
     base_model_cfg['model']['transf_decoder'] = canary_model._cfg['transf_decoder']
     base_model_cfg['model']['transf_encoder'] = canary_model._cfg['transf_encoder']
 
-    cfg = OmegaConf.create(base_model_cfg)
-    with open("config/canary-1b-flash-finetune.yaml", "w") as f:
-        OmegaConf.save(cfg, f)
+    #cfg = OmegaConf.create(base_model_cfg)
+    #with open("config/canary-1b-flash-finetune.yaml", "w") as f:
+    #    OmegaConf.save(cfg, f)
     
     manifest_path = './test_manifest.json'
-    build_manifest(data=ds['test'], manifest_path=manifest_path)
+    build_manifest(data=pd.DataFrame(ds['test']), manifest_path=manifest_path)
 
     MANIFEST = './train_manifest.json'
     MANIFEST_TEST = './test_manifest.json'

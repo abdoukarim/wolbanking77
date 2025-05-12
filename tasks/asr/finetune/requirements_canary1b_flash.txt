@@ -4,3 +4,4 @@ wget
 text-unidecode
 omegaconf
 soundfile
+kagglehub

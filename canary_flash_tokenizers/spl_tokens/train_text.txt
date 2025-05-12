@@ -1,0 +1,12 @@
+<|nospeech|>
+<pad>
+<|endoftext|>
+<|startoftranscript|>
+<|pnc|>
+<|nopnc|>
+<|translate|>
+<|transcribe|>
+<|en|>
+<|es|>
+<|fr|>
+<|wo|>
