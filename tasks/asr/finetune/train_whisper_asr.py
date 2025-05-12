@@ -155,6 +155,7 @@ def main():
 
     trainer.train()
     trainer.save_model("./distil_whisper_checkpoints/")
+    trainer.tokenizer.save_pretrained("./distil_whisper_checkpoints/")
 
 
 if __name__ == "__main__":
