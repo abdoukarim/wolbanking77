@@ -1,9 +1,6 @@
 import os, sys
 import argparse
 from datasets import load_dataset
-import pandas as pd
-import random
-import numpy as np
 import torch
 
 from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProcessor, WhisperForConditionalGeneration
@@ -19,7 +16,7 @@ from utils.logger import setup_logger
 from utils.utils_functions import set_seed
 
 set_seed(42)
-logger = setup_logger("Whisper ASR Training script")
+logger = setup_logger("distil-Whisper ASR Training script")
 
 feature_extractor = WhisperFeatureExtractor.from_pretrained("distil-whisper/distil-large-v3.5")
 tokenizer = WhisperTokenizer.from_pretrained("distil-whisper/distil-large-v3.5", task="transcribe")
@@ -102,8 +99,7 @@ def main():
                                   'test': os.path.join(args.dataset_dir, 'test.parquet')})
     dataset_train = ds['train']
     dataset_test = ds['test']
-    # feature_extractor = WhisperFeatureExtractor.from_pretrained("distil-whisper/distil-large-v3.5")
-    # tokenizer = WhisperTokenizer.from_pretrained("distil-whisper/distil-large-v3.5", task="transcribe")
+    
     processor = WhisperProcessor.from_pretrained("distil-whisper/distil-large-v3.5", task="transcribe")
     dataset_train = dataset_train.map(prepare_dataset)
     dataset_test = dataset_test.map(prepare_dataset)

@@ -2,7 +2,7 @@ import argparse
 import os, sys
 
 import torch
-from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline, WhisperTokenizer, WhisperProcessor, WhisperFeatureExtractor
+from transformers import AutoModelForSpeechSeq2Seq, pipeline, WhisperTokenizer, WhisperProcessor, WhisperFeatureExtractor
 from datasets import load_dataset
 import evaluate
 from dataclasses import dataclass
@@ -109,9 +109,7 @@ def main():
     )
     model.to(device)
 
-    # processor = AutoProcessor.from_pretrained(model_id)
     processor = WhisperProcessor.from_pretrained("distil-whisper/distil-large-v3.5", task="transcribe")
-    # tokenizer = WhisperTokenizer.from_pretrained("distil-whisper/distil-large-v3.5", task="transcribe")
     pipe = pipeline(
         "automatic-speech-recognition",
         model=model,
@@ -125,7 +123,6 @@ def main():
     preds = dataset_test.map(lambda x: predictions(pipe, x))
     references = dataset_test.map(lambda x: {'text': x["text"]})
     wer = wer_evaluate(preds["text"], references["text"])
-    sample = dataset_test[0]["audio"]
 
     logger.info(f"WER: {wer}")
     logger.info("Evaluation complete.")
