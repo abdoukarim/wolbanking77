@@ -6,13 +6,12 @@ Paper link [My Paper Title](https://arxiv.org/).
 Intent classification models have made a lot of progress in recent years. However, previous studies primarily focus on high-resource languages datasets, which results in a gap for low-resource languages and for regions with a high rate of illiterate people where languages are more spoken than read or written. This is the case in Senegal, for example, where Wolof is spoken by around 90\% of the population, with an illiteracy rate of 42\% for the country. Wolof is actually spoken by more than 10 million people in West African region. To tackle such limitations, we release a Wolof Intent Classification Dataset (WolBanking77), for academic research in intent classification. WolBanking77 currently contains 9,791 text sentences in the banking domain and more than 4 hours of spoken sentences. Experiments on various baselines are conducted in this work, including text and voice state-of-the-art models. The results are very promising on this current dataset. This paper also provide detailed analyses of the contents of the data. We report baseline f1-score and word error rate metrics respectively on NLP and ASR models trained on WolBanking77 dataset and also comparisons between models. We plan to share and conduct dataset maintenance, updates and to release open-source code.
 
 # Getting Started
-You can download a copy of the text dataset (distributed under the CC-BY-4.0 license) using this link: [Wolbanking77v1](https://kaggle.com/datasets/7d41257813a8d21992fdeb3b4840748a4ce0740d0129d3e5becc4573df4da7a7)
+You can download a copy of the dataset (distributed under the CC-BY-4.0 license) using this link: [Wolbanking77](https://kaggle.com/datasets/6f4251e190df4bb2c531856486d30b80c619155d2906f8fb3cd4448477a901b9)
 
-Copy the text dataset to the following directory : ```dataset/text/```
+Copy the text directory to the following directory : ```dataset/```
 
-You can download a copy of the audio dataset (distributed under the CC-BY-4.0 license) using this link: [WolBankingAudioDataset](https://kaggle.com/datasets/7a689c23f53b007d7602aafdedb5e8df47fc46f45886482873272f2eb8a98b28)
+Copy the audio dataset to the following directory : ```dataset/```
 
-Copy the audio dataset to the following directory : ```dataset/audio/```
 
 # Requirements
 ## NLP
@@ -114,7 +113,7 @@ python tasks/nlp/finetune/train_bert.py dataset/text/ 5k_split
 python tasks/nlp/finetune/eval_bert.py dataset/text/ 5k_split
 ```
 
->📋 You can use the same process as BertBase to train and evaluate AfroXLMR, AfroLM, mDeBERTa-v3 and AfritevaV2.
+>📋 You can use the same process as BertBase to train and evaluate AfroXLMR, AfroLM, mDeBERTa-v3 and AfritevaV2. All training and evaluation scripts are in the folder ```tasks/nlp/finetune```.
 
 ## Llama3.2
 
