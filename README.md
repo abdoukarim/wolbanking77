@@ -160,6 +160,31 @@ python tasks/nlp/finetune/eval_llama3.2-3B.py dataset/text/ 5k_split
 python tasks/asr/finetune/train_canary1b_flash.py dataset/audio/
 ```
 
+```Evaluate
+python tasks/asr/finetune/eval_canary1b_flash.py
+```
+
+## Phi4 ASR
+
+```Train
+python tasks/asr/finetune/train_phi4_asr.py dataset/audio/
+```
+
+```Evaluate
+python tasks/asr/finetune/eval_phi4_asr.py dataset/audio/
+```
+
+## Whisper distil-large-v3.5 ASR
+
+```Train
+python tasks/asr/finetune/train_whisper_asr.py dataset/audio/
+```
+
+```Evaluate
+python tasks/asr/finetune/eval_phi4_asr.py dataset/audio/
+```
+
+
 # Project tree
 
 ```

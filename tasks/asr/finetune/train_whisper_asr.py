@@ -91,6 +91,14 @@ def main():
         # required=True,
         help="The input data dir.  ",
     )
+
+    parser.add_argument(
+        "--steps",
+        default=1000,
+        type=int,
+        # required=True,
+        help="Set number of training steps.  ",
+    )
     
     args = parser.parse_args()
 
@@ -122,7 +130,7 @@ def main():
         learning_rate=1e-5,
         warmup_steps=500,
         # max_steps=2000,
-        max_steps=10,
+        max_steps=args.steps, # 10,
         gradient_checkpointing=True,
         fp16=True,
         eval_strategy="steps",
@@ -149,6 +157,7 @@ def main():
         tokenizer=processor.feature_extractor,
     )
 
+    logger.info("Number of training steps: %d", args.steps)
     trainer.train()
     trainer.save_model("./distil_whisper_checkpoints/")
     trainer.tokenizer.save_pretrained("./distil_whisper_checkpoints/")

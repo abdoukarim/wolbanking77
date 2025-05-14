@@ -20,14 +20,16 @@ set_seed(42)
 logger = setup_logger("Canary 1b ASR Training script")
 
 
-
 def build_manifest(data, manifest_path):
+    """
+    Build the manifest file for the dataset.
+    Args:
+        data: the dataset to build the manifest from
+        manifest_path: the path to save the manifest file in JSON format
+    """
     tot_duration = 0
     for line in data.iterrows():
-        #print(line[1])
-        #print(line[1][1])
         with open(manifest_path, 'a') as fout:
-            # audio_path = os.path.join('./audio-dataset/', line[1][2])
             audio_path = "./dataset/audio/wavs/"+line[1][1]['path']
             duration = line[1][3]
             transcript = line[1][0]
@@ -49,7 +51,7 @@ def build_manifest(data, manifest_path):
 
 def preprocess_audio_dataset(example):
     """
-    Preprocess the audio dataset by loading it and saving the audio files.
+    Preprocess the audio dataset by loading it and saving the audio files to dataset/audio/wavs directory.
     """
     Path("./dataset/audio/wavs").mkdir(parents=True, exist_ok=True)
     # Load the dataset
@@ -79,7 +81,7 @@ def main():
     )
     
     args = parser.parse_args()
-    # ds = load_from_disk(args.dataset_dir)
+
     ds = load_dataset("parquet", 
                       data_files={'train': os.path.join(args.dataset_dir, 'train.parquet'), 
                                   'test': os.path.join(args.dataset_dir, 'test.parquet')})
@@ -92,6 +94,7 @@ def main():
     DATA='WICD'
     VOCAB_SIZE=1024
     OUT_DIR = f"tokenizers/{LANG}_{DATA}_{VOCAB_SIZE}"
+    # create train data
     manifest_path = './train_manifest.json'
     train_text_path = './train_text.lst'
     with open(manifest_path, "r") as f:
@@ -144,16 +147,14 @@ def main():
     base_model_cfg['model']['transf_decoder'] = canary_model._cfg['transf_decoder']
     base_model_cfg['model']['transf_encoder'] = canary_model._cfg['transf_encoder']
 
-    #cfg = OmegaConf.create(base_model_cfg)
-    #with open("config/canary-1b-flash-finetune.yaml", "w") as f:
-    #    OmegaConf.save(cfg, f)
-    
+    # create test data
     manifest_path = './test_manifest.json'
     build_manifest(data=pd.DataFrame(ds['test']), manifest_path=manifest_path)
 
     MANIFEST = './train_manifest.json'
     MANIFEST_TEST = './test_manifest.json'
 
+    # run the training script
     subprocess.Popen("""
         HYDRA_FULL_ERROR=1 python scripts/speech_to_text_aed.py \
             --config-path="../config" \
