@@ -70,12 +70,14 @@ def prepare_dataset(batch):
 
 
 def wer_evaluate(predictions, references):
+    """Compute WER metric for evaluation."""
     metric = evaluate.load("wer")
     wer = 100 * metric.compute(predictions=predictions, references=references)
     return wer
 
 
 def predictions(pipe, example):
+    """Make predictions for batching puspose."""
     sample = example["audio"]
     result = pipe(sample)
     return {'text': result['text']}

@@ -79,6 +79,14 @@ def main():
         # required=True,
         help="The input data dir.  ",
     )
+
+    parser.add_argument(
+        "--steps",
+        default=1000,
+        type=int,
+        # required=True,
+        help="Set number of training steps.  ",
+    )
     
     args = parser.parse_args()
 
@@ -165,11 +173,12 @@ def main():
             model.test_ds.manifest_filepath={MANIFEST_TEST} \
             exp_manager.exp_dir="canary_results" \
             exp_manager.resume_ignore_no_checkpoint=true \
-            trainer.max_steps=10 \
+            trainer.max_steps=STEPS \
             trainer.log_every_n_steps=1
     """.format(
             MANIFEST=MANIFEST,
-            MANIFEST_TEST=MANIFEST_TEST
+            MANIFEST_TEST=MANIFEST_TEST,
+            STEPS=args.steps
         ),
         shell=True
     )

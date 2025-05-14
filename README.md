@@ -177,11 +177,12 @@ python tasks/asr/finetune/eval_phi4_asr.py dataset/audio/
 ## Whisper distil-large-v3.5 ASR
 
 ```Train
-python tasks/asr/finetune/train_whisper_asr.py dataset/audio/
+# steps is the number of training steps.
+python tasks/asr/finetune/train_whisper_asr.py dataset/audio/ --steps 1000
 ```
 
 ```Evaluate
-python tasks/asr/finetune/eval_phi4_asr.py dataset/audio/
+python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 ```
 
 

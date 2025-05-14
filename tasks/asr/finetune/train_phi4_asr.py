@@ -60,6 +60,14 @@ def main():
         # required=True,
         help="The input data dir.  ",
     )
+
+    parser.add_argument(
+        "--steps",
+        default=1000,
+        type=int,
+        # required=True,
+        help="Set number of training steps.  ",
+    )
     
     args = parser.parse_args()
     # ds = load_from_disk(args.dataset_dir)
@@ -161,7 +169,6 @@ def main():
 
     # Create dataset objects.
     train_dataset = WolBanking77Dataset(processor, train_ds, training=True)
-    # val_dataset = WolBanking77Dataset(processor, val_ds, training=False)
 
     # --------------------------------------------------
     # Optimizer Configuration with Correct Gradient Handling
@@ -183,7 +190,7 @@ def main():
         overwrite_output_dir=True,
         save_steps=10000,
         # max_steps=1000,
-        max_steps=10,
+        max_steps=args.steps, #10,
         per_device_train_batch_size=BATCH_SIZE_PER_GPU,
         gradient_checkpointing=True,
         gradient_checkpointing_kwargs={'use_reentrant': False},

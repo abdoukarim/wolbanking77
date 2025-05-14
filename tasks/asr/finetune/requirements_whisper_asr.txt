@@ -1,8 +1,9 @@
-datasets[audio] 
-transformers 
-accelerate 
-evaluate 
-jiwer 
+# datasets[audio] 
+datasets==3.6.0
+transformers==4.51.3 
+accelerate==1.6.0 
+evaluate==0.4.3 
+jiwer==3.1.0 
 tensorboard 
-huggingface_hub
+huggingface-hub==0.31.2
 kagglehub

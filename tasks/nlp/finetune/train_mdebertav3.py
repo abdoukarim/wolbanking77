@@ -70,6 +70,13 @@ def main():
         type=str,
         help="The output directory where the model predictions results will be written.",
     )
+
+    parser.add_argument(
+        "--epochs",
+        default=20,
+        type=int,
+        help="Set number of training epochs.  ",
+    )
     
     args = parser.parse_args()
 
@@ -101,7 +108,7 @@ def main():
         per_device_eval_batch_size=8, # 8
         learning_rate=2e-05,
         # num_train_epochs=20, # 5
-        num_train_epochs=1,
+        num_train_epochs=args.epochs, # 1,
         warmup_ratio=0.1,
         weight_decay=0.06,
             # PyTorch 2.0 specifics 

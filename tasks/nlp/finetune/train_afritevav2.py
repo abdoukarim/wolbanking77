@@ -71,6 +71,13 @@ def main():
         help="The output directory where the model predictions results will be written.",
     )
     
+    parser.add_argument(
+        "--epochs",
+        default=20,
+        type=int,
+        help="Set number of training epochs.  ",
+    )
+
     args = parser.parse_args()
 
     # Model id to load the tokenizer
@@ -101,7 +108,7 @@ def main():
         per_device_eval_batch_size=8, # 8
         learning_rate=2e-05,
         # num_train_epochs=20,
-        num_train_epochs=1,
+        num_train_epochs=args.epochs, # 1,
         warmup_ratio=0.1,
         weight_decay=0.01,
             # PyTorch 2.0 specifics 

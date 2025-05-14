@@ -64,6 +64,7 @@ def prepare_dataset(batch):
 
 
 def compute_metrics(pred):
+    """Compute WER metric for evaluation."""
     metric = evaluate.load("wer")
     pred_ids = pred.predictions
     label_ids = pred.label_ids
