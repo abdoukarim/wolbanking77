@@ -72,7 +72,7 @@ def main():
 
     # splits = ["full", "5k_split"]
     
-    logger.info("=========================== FINETUE BERT BASE ===========================")
+    logger.info("=========================== FINETUNE BERT BASE ===========================")
 
     logger.info("Run {split} benchmark script".format(split=args.split))
     

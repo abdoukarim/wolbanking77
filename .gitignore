@@ -176,3 +176,5 @@ cython_debug/
 # Exclude the following files and directories from the repository
 .dataset/text/*
 .dataset/audio/*
+
+.DS_Store
