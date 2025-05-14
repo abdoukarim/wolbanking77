@@ -89,7 +89,7 @@ def main():
         # default=None,
         type=str,
         # required=True,
-        help="The input data dir. Should contain the training files for the text baseline task.",
+        help="The input data dir.  ",
     )
     
     args = parser.parse_args()

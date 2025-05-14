@@ -1,9 +1,9 @@
-pandas
-transformers 
-datasets 
-accelerate 
-evaluate 
-tensorboard 
-scikit-learn
+pandas==2.2.3
+transformers==4.51.3 
+datasets==3.6.0 
+accelerate==1.6.0 
+evaluate==0.4.3 
+tensorboard==2.19.0 
+scikit-learn==1.6.1
 torch
 kagglehub
