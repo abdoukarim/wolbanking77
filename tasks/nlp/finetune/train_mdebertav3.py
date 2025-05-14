@@ -26,6 +26,13 @@ logger.info(f"Using {device} device")
 
 # Metric helper method
 def compute_metrics(eval_pred):
+    """
+    Compute evaluation metrics: F1 score, precision, and recall.
+    Args:
+    eval_pred (tuple): Tuple containing the predictions and labels.
+    Returns:
+        dict: Dictionary containing F1 score, precision, and recall.
+    """
     metric = evaluate.load("f1")
     predictions, labels = eval_pred
     predictions = np.argmax(predictions, axis=1)

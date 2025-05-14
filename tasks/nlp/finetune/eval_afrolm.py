@@ -78,6 +78,14 @@ def tokenize(batch, model_id="bonadossou/afrolm_active_learning"):
 
 
 def predict(batch, model):
+    """
+    Predict the labels for a batch of data.
+    Args:
+        batch (dict): A batch of data containing 'input_ids' and 'attention_mask'.
+        model: The pre-trained model for prediction.
+    Returns:
+        predicted: The predicted labels for the batch.
+    """
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)
     with torch.no_grad():
@@ -127,7 +135,7 @@ def main():
     
     tokenized_dataset, labels, _, _, _ = tokenize_data(raw_dataset, tokenize)
     repository_id = os.path.join(os.getcwd(), "checkpoint/afrolm/afrolm_active_learning-banking77-wolof-{split}".format(split=args.split))
-    # tokenizer = AutoTokenizer.from_pretrained(repository_id)
+    # Load the model
     model = AutoModelForSequenceClassification.from_pretrained(repository_id, use_safetensors=True).to("cuda")
     model.to("cuda")
     predictions = [predict(batch, model) for batch in tokenized_dataset["test"]]

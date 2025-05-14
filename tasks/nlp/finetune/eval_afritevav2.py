@@ -79,6 +79,14 @@ def tokenize(batch, model_id="castorini/afriteva_v2_base"):
 
 
 def predict(batch, model):
+    """
+    Predict the labels for a batch of data.
+    Args:
+        batch (dict): A batch of data containing 'input_ids' and 'attention_mask'.
+        model (transformers.PreTrainedModel): The pre-trained model for prediction.
+    Returns:
+        predicted: The predicted labels.
+    """
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)
     with torch.no_grad():

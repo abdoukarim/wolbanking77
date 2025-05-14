@@ -1,23 +1,16 @@
 import argparse
+from pathlib import Path
 import os, sys
 from datasets import load_dataset
 import soundfile as sf
 import pandas as pd
 import numpy as np
 import json
-
-import glob
-import json
-import librosa
 import numpy as np
-from omegaconf import OmegaConf, open_dict
+from omegaconf import OmegaConf
 import subprocess
-import tarfile
-import tqdm
-import wget
 from nemo.collections.asr.models import EncDecMultiTaskModel
 
-import torch
 
 sys.path.append('.')
 from utils.logger import setup_logger
@@ -58,6 +51,7 @@ def preprocess_audio_dataset(example):
     """
     Preprocess the audio dataset by loading it and saving the audio files.
     """
+    Path("./dataset/audio/wavs").mkdir(parents=True, exist_ok=True)
     # Load the dataset
     sf.write("./dataset/audio/wavs/"+example['audio']['path'],
          example['audio']["array"], samplerate=example['audio']["sampling_rate"])

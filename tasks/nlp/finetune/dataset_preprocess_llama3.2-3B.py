@@ -12,7 +12,7 @@ from datasets import ClassLabel
 
 sys.path.append('.')
 from utils.logger import setup_logger
-from utils.utils_functions import set_seed, load_data, tokenize_data
+from utils.utils_functions import set_seed, load_data
 
 set_seed(42)
 logger = setup_logger("Llama3.2-3B preprocessing data script")
@@ -44,6 +44,15 @@ Only choose one category, the most appropriate one. Reply only with the category
 
 
 def create_dataset(df, id2label, labels):
+    """
+    Create the dataset for finetuning Llama3.2
+    Args:
+        df: the dataframe to create the dataset from
+        id2label: the id2label mapping
+        labels: the labels to use for the dataset
+    Returns:
+        rows: the rows of the dataset
+    """
     rows = []
     for _, row in tqdm(df.iterrows()):
         rows.append(
@@ -95,8 +104,8 @@ def main():
     for label in raw_dataset["train"]:
         labels.append(label['label'])
     labels = list(set(labels))
-    # Prepare model labels - useful for inference
     
+    # Prepare model labels - useful for inference
     label2id, id2label = dict(), dict()
     for i, label in enumerate(labels):
         label2id[label] = str(i)

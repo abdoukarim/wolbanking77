@@ -78,6 +78,14 @@ def tokenize(batch, model_id="MoritzLaurer/mDeBERTa-v3-base-mnli-xnli"):
 
 
 def predict(batch, model):
+    """
+    Predict the labels for a batch of data.
+    Args:
+        batch (dict): A batch of data.
+        model (transformers.PreTrainedModel): The model to use for prediction.
+    Returns:
+        predicted: The predicted labels.
+    """
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
     token_type_ids = torch.tensor(batch['token_type_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)

@@ -77,6 +77,14 @@ def tokenize(batch, model_id="bert-base-uncased"):
 
 
 def predict(batch, model):
+    """
+    Predict the labels for a batch of data.
+    Args:
+        batch: The batch of data to predict.
+        model: The model to use for prediction.
+    Returns:
+        predicted: The predicted labels.
+    """
     input_ids = torch.tensor(batch['input_ids']).to(device).unsqueeze(0)
     token_type_ids = torch.tensor(batch['token_type_ids']).to(device).unsqueeze(0)
     attention_mask = torch.tensor(batch['attention_mask']).to(device).unsqueeze(0)
@@ -126,10 +134,9 @@ def main():
     
     tokenized_dataset, labels, _, _, _ = tokenize_data(raw_dataset, tokenize)
 
-    # repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split)+"/checkpoint-125")
     repository_id = os.path.join(os.getcwd(), "checkpoint/BERT/BERT-base-banking77-wolof-{split}".format(split=args.split))
-    # model_id = repository_id
-    # tokenizer = AutoTokenizer.from_pretrained(repository_id)
+    
+    # Load the model
     model = AutoModelForSequenceClassification.from_pretrained(repository_id, use_safetensors=True).to("cuda")
     model.to("cuda")
     predictions = [predict(batch, model) for batch in tokenized_dataset["test"]]

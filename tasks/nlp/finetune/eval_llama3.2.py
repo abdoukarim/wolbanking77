@@ -90,6 +90,15 @@ Only choose one category, the most appropriate one. Reply only with the category
 
 
 def create_dataset(df, id2label, labels):
+    """
+    Create a dataset for the model Llama3.2.
+    Args:
+        df (pd.DataFrame): DataFrame containing the dataset.
+        id2label (dict): Dictionary mapping label IDs to labels.
+        labels (list): List of labels.
+    Returns:
+        rows (list): List of dictionaries containing the input and output for the model.
+    """
     rows = []
     for _, row in tqdm(df.iterrows()):
         rows.append(
@@ -102,6 +111,15 @@ def create_dataset(df, id2label, labels):
 
 
 def predict(generator, test_rows, labels):
+    """
+    Predict the labels for a batch of data.
+    Args:
+        generator (pipeline): The text generation pipeline.
+        test_rows (list): A list of dictionaries containing 'input' and 'output'.
+    Returns:
+        predictions (list): List of predicted labels.
+        true_values (list): List of true labels.
+    """
     predictions = []
     true_values = []
     for row in tqdm(test_rows):
@@ -155,8 +173,8 @@ def main():
     for label in raw_dataset["train"]:
         labels.append(label['label'])
     labels = list(set(labels))
+    
     # Prepare model labels - useful for inference
-    # num_labels = len(labels)
     label2id, id2label = dict(), dict()
     for i, label in enumerate(labels):
         label2id[label] = str(i)
@@ -168,21 +186,18 @@ def main():
     new_features = raw_dataset['test'].features.copy()
     new_features['label'] = ClassLabel(names=list(set(labels)))
     raw_dataset['test'] = raw_dataset['test'].cast(new_features)    
+    
     # Tokenize the dataset
-    # tokenized_dataset, _, num_labels, label2id, id2label = tokenize_data(raw_dataset, tokenize)
-    # train_df = pd.DataFrame(raw_dataset['train'])
     test_df = pd.DataFrame(raw_dataset['test'])
-
-    # train_rows = create_dataset(train_df, id2label, labels)
     test_rows = create_dataset(test_df, id2label, labels)
     
     # Generate huggingface token
     TOKEN = input("Enter your Hugging Face token: ")
     login(token = TOKEN)
-    # model_id = os.path.join(os.getcwd(), "Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0")
+    
     model_id = input("Enter the path to the model checkpoint [./Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0] : ") or "./Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_0"
     logger.info("================= model_id ============ :",model_id)
-    # model_id = "/workspace/NLP_TASKS/Llama-3.2-1B-Instruct-torchtune-checkpoints/epoch_14"
+    
     generator = pipeline(
             "text-generation",
             model=model_id,

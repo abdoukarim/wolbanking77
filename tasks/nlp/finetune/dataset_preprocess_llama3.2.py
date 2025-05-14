@@ -5,7 +5,6 @@ from typing import List
 import numpy as np
 import pandas as pd
 import torch
-# from sklearn.metrics import accuracy_score, classification_report, f1_score, precision_score, recall_score
 from tqdm import tqdm
 import argparse
 
@@ -13,7 +12,7 @@ from datasets import ClassLabel
 
 sys.path.append('.')
 from utils.logger import setup_logger
-from utils.utils_functions import set_seed, load_data, tokenize_data
+from utils.utils_functions import set_seed, load_data
 
 set_seed(42)
 logger = setup_logger("Llama3.2 preprocessing data script")
@@ -45,6 +44,15 @@ Only choose one category, the most appropriate one. Reply only with the category
 
 
 def create_dataset(df, id2label, labels):
+    """
+    Create the dataset for finetuning Llama3.2
+    Args:
+        df: the dataframe to create the dataset from
+        id2label: the id2label mapping
+        labels: the labels to use for the dataset
+    Returns:
+        rows: the rows of the dataset
+    """
     rows = []
     for _, row in tqdm(df.iterrows()):
         rows.append(

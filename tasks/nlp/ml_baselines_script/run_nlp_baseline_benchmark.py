@@ -1,8 +1,5 @@
 import pandas as pd
-import numpy as np
-import re
 # from matplotlib import pylab as plt
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn import metrics
 from sklearn.feature_extraction.text import CountVectorizer
@@ -13,7 +10,6 @@ from sklearn.naive_bayes import GaussianNB
 
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torch.nn.functional as F
 import os
 import sys
@@ -38,7 +34,6 @@ device = (
 )
 logger.info(f"Using {device} device")
 
-# DATASET_PATH = ".dataset/text/wolbanking77v1"
 
 class MLP(nn.Module):
     def __init__(self, embed_size, num_labels):

@@ -90,6 +90,15 @@ Only choose one category, the most appropriate one. Reply only with the category
 
 
 def create_dataset(df, id2label, labels):
+    """ 
+    Create a dataset for the model for Llama3.2.
+    Args:
+        df (pd.DataFrame): DataFrame containing the dataset.
+        id2label (dict): Dictionary mapping label IDs to labels.
+        labels (list): List of labels.
+    Returns:
+        rows (list): List of dictionaries containing the input and output for each row.
+    """
     rows = []
     for _, row in tqdm(df.iterrows()):
         rows.append(
@@ -102,6 +111,16 @@ def create_dataset(df, id2label, labels):
 
 
 def predict(generator, test_rows, labels):
+    """
+    Predict the labels for the test dataset.
+    Args:
+        generator (pipeline): The text generation pipeline.
+        test_rows (list): List of dictionaries containing the input and output for each row.
+        labels (list): List of labels.
+    Returns:
+        predictions (list): List of predicted labels.
+        true_values (list): List of true labels.
+    """
     predictions = []
     true_values = []
     for row in tqdm(test_rows):
@@ -174,9 +193,9 @@ def main():
     # Generate huggingface token
     TOKEN = input("Enter your Hugging Face token: ")
     login(token = TOKEN)
-    # model_id = os.path.join(os.getcwd(), "Llama-3.2-3B-Instruct-torchtune-checkpoints/epoch_0")
     model_id = input("Enter the path to the model checkpoint [./Llama-3.2-3B-Instruct-torchtune-checkpoints/epoch_0] : ") or "./Llama-3.2-3B-Instruct-torchtune-checkpoints/epoch_0"
     logger.info("================= model_id ============ :",model_id)
+    
     generator = pipeline(
             "text-generation",
             model=model_id,

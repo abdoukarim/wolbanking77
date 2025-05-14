@@ -10,7 +10,7 @@ You can download a copy of the dataset (distributed under the CC-BY-4.0 license)
 
 Copy the text directory to the following directory : ```dataset/```
 
-Copy the audio dataset to the following directory : ```dataset/```
+Copy the audio directory to the following directory : ```dataset/```
 
 
 # Requirements
@@ -120,19 +120,44 @@ python tasks/nlp/finetune/eval_bert.py dataset/text/ 5k_split
 You can train and evaluate Llama3.2 (version 1B & 3B) using this following commands :
 ```Train
 # data preprocessing
-python tasks/nlp/finetune/dataset_preprocess_llama3.2-1B.py dataset/text/ 5k_split
+python tasks/nlp/finetune/dataset_preprocess_llama3.2.py dataset/text/ 5k_split
+
+# To download Llama3.2 you have to request grant access using this url [Llama-3.2-1B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct) for Llama-3.2-1B-Instruct and [Llama-3.2-3B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct) for Llama-3.2-3B-Instruct.
 
 # download Llama-3.2-1B-Instruct checkpoints by specifying your hugginface token.
-tune download "meta-llama/Llama-3.2-1B-Instruct"  \   
-    --output-dir "./Llama-3.2-1B-Instruct"  \   
-    --hf-token "hugginface token"  \   
+tune download meta-llama/Llama-3.2-1B-Instruct \
+    --output-dir ./Llama-3.2-1B-Instruct \
+    --hf-token "hugginface token" \
     --ignore-patterns "[]"
 
-# start training process
+# download Llama-3.2-3B-Instruct checkpoints by specifying your hugginface token.
+tune download meta-llama/Llama-3.2-3B-Instruct \
+    --output-dir ./Llama-3.2-3B-Instruct \
+    --hf-token "hugginface token" \
+    --ignore-patterns "[]"
+
+# start training process for Llama-3.2-1B-Instruct
 tune run lora_finetune_single_device --config "custom_config.yaml" epochs=20
 
-# run the evaluation script
+# start training process for Llama-3.2-3B-Instruct
+tune run lora_finetune_single_device --config "custom_config_llama3_2_3B.yaml" epochs=20
+
+```
+
+```Evaluate
+>📋 checkpoints are saved in this directory ```./Llama-3.2-1B-Instruct-torchtune-checkpoints/``` for Llama-3.2-1B-Instruct and this directory ```./Llama-3.2-3B-Instruct-torchtune-checkpoints/``` for Llama-3.2-3B-Instruct
+
+# run the evaluation script for Llama-3.2-1B-Instruct
 python tasks/nlp/finetune/eval_llama3.2.py dataset/text/ 5k_split
+
+# run the evaluation script for Llama-3.2-3B-Instruct
+python tasks/nlp/finetune/eval_llama3.2-3B.py dataset/text/ 5k_split
+```
+
+## Canary 1b flash
+
+```Train
+python tasks/asr/finetune/train_canary1b_flash.py dataset/audio/
 ```
 
 # Project tree
