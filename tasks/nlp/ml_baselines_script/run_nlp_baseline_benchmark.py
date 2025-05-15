@@ -263,8 +263,8 @@ def compute_laser_mlp(embed_size, train_loader, valid_loader, y_test_encoded, nu
     mlp_model = MLP(embed_size, num_labels).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(mlp_model.parameters(), lr=1e-3)
-    # epochs = 200
-    epochs = 1
+    epochs = 200
+    # epochs = 1
     train_loss = []
     test_avg_loss = []
     for t in range(epochs):
@@ -280,8 +280,8 @@ def compute_laser_cnn(embed_size, train_loader, valid_loader, y_test_encoded, nu
     cnn_model = CNNModel(embed_size, num_labels).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(cnn_model.parameters(), lr=1e-3)
-    # epochs = 200
-    epochs = 1
+    epochs = 200
+    # epochs = 1
 
     train_loss = []
     test_avg_loss = []
