@@ -185,6 +185,10 @@ python tasks/asr/finetune/train_whisper_asr.py dataset/audio/ --steps 1000
 python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 ```
 
+# Zero-shot & Few-shot classification
+
+All Zero-shot & Few-shot classification experiments are stored in the notebooks ```directory``` as well the other experiments.
+
 
 # Project tree
 
