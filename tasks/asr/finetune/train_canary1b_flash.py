@@ -173,7 +173,7 @@ def main():
             model.test_ds.manifest_filepath={MANIFEST_TEST} \
             exp_manager.exp_dir="canary_results" \
             exp_manager.resume_ignore_no_checkpoint=true \
-            trainer.max_steps=STEPS \
+            trainer.max_steps={STEPS} \
             trainer.log_every_n_steps=1
     """.format(
             MANIFEST=MANIFEST,
