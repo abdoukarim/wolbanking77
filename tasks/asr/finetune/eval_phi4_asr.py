@@ -100,7 +100,7 @@ def evaluate(model, processor, eval_dataset, save_path=None, disable_tqdm=False,
         norm_all_generated_texts = normalize_text(all_generated_texts)
         # wer = jiwer.wer(norm_all_labels, norm_all_generated_texts)
         wer = wer_metric.compute(references=norm_all_labels, predictions=norm_all_generated_texts)
-        logger.info("WER:", wer)
+        logger.info("WER: {wer}".format(wer=wer))
         if save_path:
             with open(save_path, 'w') as f:
                 save_dict = {
