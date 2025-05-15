@@ -187,21 +187,22 @@ python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 
 # Zero-shot & Few-shot classification
 
-All Zero-shot & Few-shot classification experiments are stored in the notebooks ```directory``` as well the other experiments.
+All Zero-shot & Few-shot classification experiments are stored in the ```notebooks``` directory as well the other experiments.
 
 
 # Project tree
 
 ```
+📦canary_flash_tokenizers - this folder stores Canary flash tokenizers for the Wolof language.
 📦checkpoint - this folder contains any saved model checkpoints.
 📦config - contains canary flash config.
 📦dataset
  ┣ 📂audio - here's the folder that contains all audios and transcriptions.
  ┃ 📂text  - This folder contains WolBanking77 text data.
-📦results  - This folder contains results from benchmarks.
+📦results  - This folder stores results from different benchmarks.
 📦scripts  - Contains scripts dowloaded from Nvidia Nemo.
 📦notebooks	- this folder contains any notebooks of the project.
-📦lexicons	- this folder contains any texts and phonetic transcriptions for the audio dataset.
+📦lexicons	- this folder contains all texts and phonetic transcriptions for the audio dataset.
 ```
 
 

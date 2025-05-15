@@ -2,9 +2,7 @@ import os, sys
 os.environ["KAGGLE_USERNAME"] = input("Enter your Kaggle username: ")
 os.environ["KAGGLE_KEY"] = input("Enter your Kaggle key: ")
 
-
 import kagglehub
-import shutil
 
 sys.path.append('.')
 from utils.logger import setup_logger
