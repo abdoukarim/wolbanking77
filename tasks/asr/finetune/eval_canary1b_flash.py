@@ -30,7 +30,7 @@ def main():
             model_path="./canary_results/canary-1b-flash-finetune/checkpoints/canary-1b-flash-finetune.nemo" \
             pretrained_name="canary-1b-flash" \
             dataset_manifest={MANIFEST_TEST} \
-            output_filename='./pred_manifest.json' \
+            output_filename="pred_manifest.json" \
             batch_size=32 \
             amp=True \
             use_cer=False
