@@ -219,8 +219,8 @@ def main():
     )
     #--------------------------------------------------
 
-    logger.info("Trainable params:", sum(p.numel() for p in model.parameters() if p.requires_grad))
-
+    logger.info("Trainable params: {params}".format(params=sum(p.numel() for p in model.parameters() if p.requires_grad)))
+    logger.info("Number of steps: {steps}".format(steps=args.steps))
     # --------------------------------------------------
     # Training
     # --------------------------------------------------

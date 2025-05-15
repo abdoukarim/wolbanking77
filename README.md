@@ -106,7 +106,7 @@ To train & evaluate the NLP models in the paper, run this command:
 
 ## BertBase
 ```Train
-python tasks/nlp/finetune/train_bert.py dataset/text/ 5k_split
+python tasks/nlp/finetune/train_bert.py dataset/text/ 5k_split --epochs 20
 ```
 
 ```Evaluate
@@ -157,7 +157,7 @@ python tasks/nlp/finetune/eval_llama3.2-3B.py dataset/text/ 5k_split
 ## Canary 1b flash
 
 ```Train
-python tasks/asr/finetune/train_canary1b_flash.py dataset/audio/
+python tasks/asr/finetune/train_canary1b_flash.py dataset/audio/ --steps 1000
 ```
 
 ```Evaluate
@@ -167,7 +167,7 @@ python tasks/asr/finetune/eval_canary1b_flash.py
 ## Phi4 ASR
 
 ```Train
-python tasks/asr/finetune/train_phi4_asr.py dataset/audio/
+python tasks/asr/finetune/train_phi4_asr.py dataset/audio/ --steps 1000
 ```
 
 ```Evaluate

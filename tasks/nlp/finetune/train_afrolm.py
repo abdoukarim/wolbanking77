@@ -144,6 +144,8 @@ def main():
         compute_metrics=compute_metrics,
     )
 
+    logger.info("Number of epochs: {epochs}".format(epochs=args.epochs))
+    
     # Start training
     trainer.train()
 
