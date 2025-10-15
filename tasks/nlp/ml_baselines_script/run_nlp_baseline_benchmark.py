@@ -77,6 +77,21 @@ class CNNModel(nn.Module):
     return self.fc(conv_layer)  
 
 
+class CNNModelTuned(nn.Module):
+    def __init__(self, embed_size, num_labels, input_layer=4):
+        super().__init__()
+        self.input_layer = input_layer
+        self.conv = nn.Conv1d(embed_size, input_layer, kernel_size=1)
+        self.relu = nn.ReLU()
+        self.fc = nn.Linear(input_layer, num_labels)
+
+    def forward(self, x):
+        x = x.transpose(0, 1)
+        conv_layer = self.relu(self.conv(x))
+        conv_layer = conv_layer.view(-1, self.input_layer)
+        return self.fc(conv_layer)
+
+
 def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False):
     """
     Export the results to a CSV file.
@@ -91,8 +106,8 @@ def export_results_to_csv(precision, recall, f1, output_dir, split, is_dl=False)
     # Save the DataFrame to a CSV file
     if is_dl:
         data = {
-            'Model': ["LASER+MLP", "LASER+CNN"], # ['LASER+MLP'],
-            'split': [split, split],
+            'Model': ["LASER+MLP", "LASER+CNN", 'LASER+CNNTuned'], # ['LASER+MLP'],
+            'split': [split, split, split],
             'Precision': precision,
             'Recall': recall,
             'F1': f1
@@ -281,8 +296,22 @@ def compute_laser_cnn(embed_size, train_loader, valid_loader, y_test_encoded, nu
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(cnn_model.parameters(), lr=1e-3)
     epochs = 200
-    # epochs = 1
+    train_loss = []
+    test_avg_loss = []
+    for t in range(epochs):
+        logger.info(f"Epoch {t+1}\n-------------------------------")
+        train_loss.append(train(train_loader, cnn_model, loss_fn, optimizer))
+        test_avg_loss.append(test(valid_loader, cnn_model, loss_fn))
+    logger.info("Done!")
 
+    return cnn_model, valid_loader, loss_fn, y_test_encoded
+
+
+def compute_laser_cnn_tuned(embed_size, train_loader, valid_loader, y_test_encoded, num_labels):
+    cnn_model = CNNModelTuned(embed_size, num_labels, input_layer=128).to(device)
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(cnn_model.parameters(), lr=0.013364046097018405)
+    epochs = 200
     train_loss = []
     test_avg_loss = []
     for t in range(epochs):
@@ -467,6 +496,18 @@ def main():
         precision_scores.append(precision)
         recall_scores.append(recall)
         logger.info("CNN evaluation done")
+
+        # Compute LASER+CNNTuned
+        train_loader = torch.utils.data.DataLoader(train_data, batch_size=2, shuffle=True)
+        valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=2, shuffle=False)
+        cnn_model, valid_loader, loss_fn, y_test_encoded = compute_laser_cnn_tuned(embed_size, train_loader, valid_loader, y_test_encoded, num_labels)
+        logger.info("CNN Tunded computed")
+        y_true, y_pred = eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded)
+        f1, precision, recall = compute_metrics(y_true, y_pred)
+        f1_scores.append(f1)
+        precision_scores.append(precision)
+        recall_scores.append(recall)
+        logger.info("CNN Tunded evaluation done")
         
         # Export results to CSV
         export_results_to_csv(precision_scores, recall_scores, f1_scores, args.output_dir, split, is_dl=True)
