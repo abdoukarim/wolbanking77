@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import os
 import sys
 import argparse
+import numpy as np
 
 from laser_encoders import LaserEncoderPipeline
 
@@ -346,11 +347,11 @@ def eval_laser_mlp(mlp_model, valid_loader, loss_fn, le, y_test_encoded):
     return y_true, y_pred
 
 
-def eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded):
+def eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded, cnn_tuned=False):
     """
     Evaluate the CNN model on the validation set.
     Args:
-        mlp_model (MLP): The trained MLP model.
+        cnn_model: The trained CNN model.
         valid_loader (DataLoader): DataLoader for the validation set.
         loss_fn (nn.Module): Loss function used for evaluation.
     """
@@ -363,6 +364,8 @@ def eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded):
         avg_val_loss += loss_fn(y_pred, y_batch).item() / len(valid_loader)
         # keep/store predictions
         val_preds.append(F.softmax(y_pred).cpu().numpy().argmax(1))
+    if cnn_tuned:
+        val_preds = list(np.array(val_preds[:-1]).flatten()) + [val_preds[-1][0]]
     y_true = [le.classes_[x] for x in y_test_encoded]
     y_pred = [le.classes_[x] for x in val_preds]
 
@@ -502,7 +505,7 @@ def main():
         valid_loader = torch.utils.data.DataLoader(valid_data, batch_size=2, shuffle=False)
         cnn_model, valid_loader, loss_fn, y_test_encoded = compute_laser_cnn_tuned(embed_size, train_loader, valid_loader, y_test_encoded, num_labels)
         logger.info("CNN Tunded computed")
-        y_true, y_pred = eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded)
+        y_true, y_pred = eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded, cnn_tuned=True)
         f1, precision, recall = compute_metrics(y_true, y_pred)
         f1_scores.append(f1)
         precision_scores.append(precision)
