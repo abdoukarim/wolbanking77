@@ -365,7 +365,11 @@ def eval_cnn_mlp(cnn_model, valid_loader, loss_fn, le, y_test_encoded, cnn_tuned
         # keep/store predictions
         val_preds.append(F.softmax(y_pred).cpu().numpy().argmax(1))
     if cnn_tuned:
-        val_preds = list(np.array(val_preds[:-1]).flatten()) + [val_preds[-1][0]]
+        if len(y_test_encoded) % 2 == 0:
+            val_preds = list(np.array(val_preds).flatten())
+        else:
+            val_preds = list(np.array(val_preds[:-1]).flatten()) + [val_preds[-1][0]]
+    
     y_true = [le.classes_[x] for x in y_test_encoded]
     y_pred = [le.classes_[x] for x in val_preds]
 
