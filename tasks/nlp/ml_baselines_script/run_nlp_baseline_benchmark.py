@@ -312,7 +312,7 @@ def compute_laser_cnn_tuned(embed_size, train_loader, valid_loader, y_test_encod
     cnn_model = CNNModelTuned(embed_size, num_labels, input_layer=128).to(device)
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(cnn_model.parameters(), lr=0.013364046097018405)
-    epochs = 200
+    epochs = 50
     train_loss = []
     test_avg_loss = []
     for t in range(epochs):
