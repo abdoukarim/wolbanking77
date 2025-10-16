@@ -1,6 +1,6 @@
 # Wolbanking77: Wolof Banking Speech Intent Classification Dataset
 
-[Paper link](https://arxiv.org/abs/2509.19271). 
+[Paper link](https://arxiv.org/abs/2509.19271)
 
 # Abstract
 Intent classification models have made a significant progress in recent years. However, previous studies primarily focus on high-resource language datasets, which results in a gap for low-resource languages and for regions with high rates of illiteracy, where languages are more spoken than read or written. This is the case in Senegal, for example, where Wolof is spoken by around 90\% of the population, while the national illiteracy rate remains at of 42\%. Wolof is actually spoken by more than 10 million people in West African region. To address these limitations, we introduce the Wolof Banking Speech Intent Classification Dataset (WolBanking77), for academic research in intent classification. WolBanking77 currently contains 9,791 text sentences in the banking domain and more than 4 hours of spoken sentences. Experiments on various baselines are conducted in this work, including text and voice state-of-the-art models. The results are very promising on this current dataset. In addition, this paper presents an in-depth examination of the dataset’s contents. We report baseline F1-scores and word error rates metrics respectively on NLP and ASR models trained on WolBanking77 dataset and also comparisons between models. We plan to share and conduct dataset maintenance, updates and to release open-source code.
@@ -211,3 +211,16 @@ All Zero-shot & Few-shot classification experiments are stored in the ```noteboo
 # License
 
 >📋 Dataset and code are distributed under the CC-BY-4.0 license.
+
+# Citation
+
+```
+@inproceedings{
+kandji2025wolbanking,
+title={WolBanking77: Wolof Banking Speech Intent Classification Dataset},
+author={Abdou Karim KANDJI and Frederic Precioso and Cheikh BA and Augustin NDIONE and Samba NDIAYE},
+booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
+year={2025},
+url={https://openreview.net/forum?id=7k0JBDeHAv}
+}
+```
