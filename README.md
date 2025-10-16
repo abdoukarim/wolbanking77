@@ -218,7 +218,7 @@ All Zero-shot & Few-shot classification experiments are stored in the ```noteboo
 @inproceedings{
     kandji2025wolbanking,
     title={WolBanking77: Wolof Banking Speech Intent Classification Dataset},
-    author={Abdou Karim KANDJI and Frederic Precioso and Cheikh BA and Augustin NDIONE and Samba NDIAYE},
+    author={Abdou Karim KANDJI and Frederic Precioso and Cheikh BA and Samba NDIAYE and Augustin NDIONE},
     booktitle={The Thirty-ninth Annual Conference on Neural Information Processing Systems Datasets and Benchmarks Track},
     year={2025},
     url={https://openreview.net/forum?id=7k0JBDeHAv}
