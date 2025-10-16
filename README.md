@@ -1,6 +1,6 @@
 # Wolbanking77: Wolof Banking Speech Intent Classification Dataset
 
-Paper link [My Paper Title](https://arxiv.org/). 
+[Paper link](https://arxiv.org/abs/2509.19271). 
 
 # Abstract
 Intent classification models have made a significant progress in recent years. However, previous studies primarily focus on high-resource language datasets, which results in a gap for low-resource languages and for regions with high rates of illiteracy, where languages are more spoken than read or written. This is the case in Senegal, for example, where Wolof is spoken by around 90\% of the population, while the national illiteracy rate remains at of 42\%. Wolof is actually spoken by more than 10 million people in West African region. To address these limitations, we introduce the Wolof Banking Speech Intent Classification Dataset (WolBanking77), for academic research in intent classification. WolBanking77 currently contains 9,791 text sentences in the banking domain and more than 4 hours of spoken sentences. Experiments on various baselines are conducted in this work, including text and voice state-of-the-art models. The results are very promising on this current dataset. In addition, this paper presents an in-depth examination of the dataset’s contents. We report baseline F1-scores and word error rates metrics respectively on NLP and ASR models trained on WolBanking77 dataset and also comparisons between models. We plan to share and conduct dataset maintenance, updates and to release open-source code.
@@ -8,7 +8,7 @@ Intent classification models have made a significant progress in recent years. H
 # Getting Started
 You can download a copy of the dataset (distributed under the CC-BY-4.0 license) available on Kaggle using the following link: 
 
-- [Wolbanking77 on Kaggle](https://kaggle.com/datasets/6f4251e190df4bb2c531856486d30b80c619155d2906f8fb3cd4448477a901b9)
+- [Wolbanking77 on Kaggle](https://www.kaggle.com/datasets/abdoukarimkandji/wolbanking77)
 
 Copy the text directory to the following directory : ```dataset/```
 
@@ -104,7 +104,7 @@ python tasks/nlp/ml_baselines_script/run_nlp_baseline_benchmark.py dataset/text/
 ```
 
 To train & evaluate the NLP models in the paper, run this command:
->📋  You can sprecify the corresponding split to run (5k_split or full).
+>📋  You can specify the corresponding split to run (5k_split or full).
 
 ## BertBase
 ```Train
