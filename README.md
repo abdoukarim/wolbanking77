@@ -21,7 +21,7 @@ Copy the audio directory to the following directory : ```dataset/```
 
 To install requirements for baseline models (KNN, SVM, Logistic Regression, Naive Bayes, LASER+MLP, LASER+CNN):
 
-```setup
+```shell
 pip install -r tasks/nlp/ml_baselines_script/requirements_baseline.txt
 ```
 
@@ -30,7 +30,7 @@ pip install -r tasks/nlp/ml_baselines_script/requirements_baseline.txt
 
 To install requirements for BertBase :
 
-```setup
+```shell
 sh setup_bert_base.sh
 ```
 
@@ -38,7 +38,7 @@ sh setup_bert_base.sh
 
 To install requirements for AfroXLMR :
 
-```setup
+```shell
 sh setup_afroxlrm.sh
 ```
 
@@ -46,7 +46,7 @@ sh setup_afroxlrm.sh
 
 To install requirements for AfroLM :
 
-```setup
+```shell
 sh setup_afrolm.sh
 ```
 
@@ -54,7 +54,7 @@ sh setup_afrolm.sh
 
 To install requirements for mDeBERTa-v3 :
 
-```setup
+```shell
 sh setup_mdebertav3.sh
 ```
 
@@ -62,7 +62,7 @@ sh setup_mdebertav3.sh
 
 To install requirements for AfritevaV2 :
 
-```setup
+```shell
 sh setup_afritevav2.sh
 ```
 
@@ -70,7 +70,7 @@ sh setup_afritevav2.sh
 
 To install requirements for Llama-3.2 :
 
-```setup
+```shell
 sh setup_llama3.2.sh
 ```
 
@@ -78,19 +78,19 @@ sh setup_llama3.2.sh
 
 To install requirements for Canary-1b-flash :
 
-```setup
+```shell
 sh setup_canary1b_asr.sh
 ```
 
 To install requirements for Phi-4-multimodal-instruct :
 
-```setup
+```shell
 sh setup_phi4_asr.sh
 ```
 
 To install requirements for Distil-whisper-large-v3.5 :
 
-```setup
+```shell
 sh setup_whisper_asr.sh
 ```
 
@@ -99,7 +99,8 @@ sh setup_whisper_asr.sh
 To run & evaluate the Baseline models in the paper, run this command:
 
 ## Baselines
-```Run
+```shell
+# Run
 python tasks/nlp/ml_baselines_script/run_nlp_baseline_benchmark.py dataset/text/
 ```
 
@@ -107,11 +108,13 @@ To train & evaluate the NLP models in the paper, run this command:
 >📋  You can specify the corresponding split to run (5k_split or full).
 
 ## BertBase
-```Train
+```shell
+# Train
 python tasks/nlp/finetune/train_bert.py dataset/text/ 5k_split --epochs 20
 ```
 
-```Evaluate
+```shell
+# Evaluate
 python tasks/nlp/finetune/eval_bert.py dataset/text/ 5k_split
 ```
 
@@ -119,8 +122,9 @@ python tasks/nlp/finetune/eval_bert.py dataset/text/ 5k_split
 
 ## Llama3.2
 
-You can train and evaluate Llama3.2 (version 1B & 3B) using this following commands :
-```Train
+You can train and evaluate Llama3.2 (version 1B & 3B) using this following commands:
+```shell
+# Train
 # data preprocessing
 python tasks/nlp/finetune/dataset_preprocess_llama3.2.py dataset/text/ 5k_split
 
@@ -146,7 +150,7 @@ tune run lora_finetune_single_device --config "custom_config_llama3_2_3B.yaml" e
 
 ```
 
-```Evaluate
+```shell
 >📋 checkpoints are saved in this directory ```./Llama-3.2-1B-Instruct-torchtune-checkpoints/``` for Llama-3.2-1B-Instruct and this directory ```./Llama-3.2-3B-Instruct-torchtune-checkpoints/``` for Llama-3.2-3B-Instruct
 
 # run the evaluation script for Llama-3.2-1B-Instruct
@@ -158,32 +162,38 @@ python tasks/nlp/finetune/eval_llama3.2-3B.py dataset/text/ 5k_split
 
 ## Canary 1b flash
 
-```Train
+```shell
+# Train
 python tasks/asr/finetune/train_canary1b_flash.py dataset/audio/ --steps 1000
 ```
 
-```Evaluate
+```shell
+# Evaluate
 python tasks/asr/finetune/eval_canary1b_flash.py
 ```
 
 ## Phi4 ASR
 
-```Train
+``` shell
+# Train
 python tasks/asr/finetune/train_phi4_asr.py dataset/audio/ --steps 1000
 ```
 
-```Evaluate
+```shell
+# Evaluate
 python tasks/asr/finetune/eval_phi4_asr.py dataset/audio/
 ```
 
 ## Whisper distil-large-v3.5 ASR
 
-```Train
+```shell
+# Train
 # steps is the number of training steps.
 python tasks/asr/finetune/train_whisper_asr.py dataset/audio/ --steps 1000
 ```
 
-```Evaluate
+```shell
+# Evaluate
 python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 ```
 
