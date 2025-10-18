@@ -214,7 +214,9 @@ All Zero-shot & Few-shot classification experiments are stored in the ```noteboo
 
 # Citation
 
-```
+To cite this work, please use the following reference:
+
+```bibtex
 @inproceedings{
     kandji2025wolbanking,
     title={WolBanking77: Wolof Banking Speech Intent Classification Dataset},
