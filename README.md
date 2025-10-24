@@ -202,6 +202,34 @@ python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 All Zero-shot & Few-shot classification experiments are stored in the ```notebooks``` directory as well the other experiments.
 
 
+# Fine-trained model
+
+wolbanking77-afro-xlmr-large fine-tuned model is available for download on huggingface [wolbanking77-afro-xlmr-large](https://huggingface.co/karim155/wolbanking77-afro-xlmr-large).
+
+# Results
+
+**F1-score** scores on WolBanking77 :
+
+### [Intent Classification on WolBanking77](https://www.kaggle.com/datasets/abdoukarimkandji/wolbanking77)
+
+| Model name            | F1-score        |
+| ----------------------|---------------- |
+| BERT-Base             |     55%         |
+| AfroXLMR              |     57%         |
+| AfroLM                |     56%         |
+| mDeBERTa-v3           |     52%         |
+| AfritevaV2            |     50%         |
+| Llama-3.2-1B-Instruct |     46%         |
+| Llama-3.2-3B-Instruct |     55%         |
+
+**WER** scores on WolBanking77 :
+
+| Model name                | WER             |
+| --------------------------|---------------- |
+| Phi-4-multimodal-instruct |     3.1%        |
+| Distil-whisper-large-v3.5 |     4.63%       |
+| Canary-1b-flash           |     0.59%       |
+
 # Project tree
 
 ```
