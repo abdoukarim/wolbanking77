@@ -202,7 +202,7 @@ python tasks/asr/finetune/eval_whisper_asr.py dataset/audio/
 All Zero-shot & Few-shot classification experiments are stored in the ```notebooks``` directory as well the other experiments.
 
 
-# Fine-trained model
+# Fine-tuned model
 
 wolbanking77-afro-xlmr-large fine-tuned model is available for download on huggingface [wolbanking77-afro-xlmr-large](https://huggingface.co/karim155/wolbanking77-afro-xlmr-large).
 
